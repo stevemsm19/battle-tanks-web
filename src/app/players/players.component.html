@@ -1,0 +1,7 @@
+<button (click)="addPlayer()">Agregar jugador</button>
+
+<ul>
+    <li *ngFor="let p of players$ | async">
+    {{ p.id }} - ({{ p.x }}, {{ p.y }})
+    </li>
+</ul>
