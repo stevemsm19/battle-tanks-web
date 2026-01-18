@@ -30,14 +30,14 @@
   flex: 1;
   border: 2px solid white;
   border-bottom: none;
-  padding: 1rem;
+  padding: 1rem 1rem 0 1rem;
   overflow-y: auto;
   background-color: #000;
   margin-bottom: 1rem;
 }
 
 .chat-message {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
   border-left: 3px solid transparent;
   padding-left: 0.5rem;
 
