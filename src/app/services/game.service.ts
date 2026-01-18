@@ -41,14 +41,17 @@ export class GameService {
 
   private addListeners() {
     this.signalrService.on('PlayerJoined', (player: Player) => {
+      console.log('Player joined: ' + player.name);
       this.updatePlayerList(player);
     });
 
     this.signalrService.on('UpdatePlayerList', (players: Player[]) => {
+      console.log('UpdatePlayerList received');
       this.players.set(players);
     });
 
     this.signalrService.on('ReceiveMessage', (message: ChatMessage) => {
+      console.log('ReceiveMessage received');
       this.addMessage(message);
     });
   }
