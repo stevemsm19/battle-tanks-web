@@ -1,45 +1,33 @@
 import { Injectable } from '@angular/core';
-import * as signalR from '@microsoft/signalr';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class SignalRService {
+export class SignalrService {
+  private hubConnection: HubConnection;
 
-  private hubConnection!: signalR.HubConnection;
-
-  constructor() {}
-
-  startConnection(): void {
-    this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/chathub')
+  constructor() {
+    this.hubConnection = new HubConnectionBuilder()
+      .withUrl('http://serverurl/gamehub')
       .withAutomaticReconnect()
       .build();
 
-    this.hubConnection
-      .start()
-      .then(() => console.log('Connected to SignalR hub'))
-      .catch(error =>
-        console.error('Error starting SignalR:', error)
-      );
+    this.startConnection();
   }
 
-  onMessageReceived(callback: (user: string, message: string) => void): void {
-
-  setTimeout(() => {
-    callback('System', 'Conection stablished successfully');
-  }, 1000);
-
-  setTimeout(() => {
-    callback('Client 1', 'This is a test message from Client 1');
-  }, 3000);
-}
-
-  sendMessage(user: string, message: string): void {
+  private startConnection() {
     this.hubConnection
-      .invoke('SendMessage', user, message)
-      .catch(error =>
-        console.error('Error sending message', error)
-      );
+      .start()
+      .then(() => console.log('Connection started'))
+      .catch((err) => console.log('Error while starting connection: ' + err));
+  }
+
+  public on(methodName: string, newMethod: (...args: any[]) => void) {
+    this.hubConnection.on(methodName, newMethod);
+  }
+
+  public invoke(methodName: string, ...args: any[]) {
+    return this.hubConnection.invoke(methodName, ...args);
   }
 }
