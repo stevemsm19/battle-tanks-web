@@ -6,6 +6,8 @@ export interface Player {
   status: 'creator' | 'ready' | 'waiting' | 'empty';
   avatar?: string;
   isCurrentUser?: boolean;
+  x?: number;
+  y?: number;
 }
 
 export interface ChatMessage {
@@ -20,14 +22,35 @@ export interface ChatMessage {
 })
 export class GameService {
   private signalrService = inject(SignalrService);
-  currentUserId = '1';
+  readonly _currentUserId = '1';
+  private _roomName = 'TEST';
+  private _mapName = 'TESTMAP';
+  private _roomId = '123';
 
-  public players = signal<Player[]>([
+  public get currentUserId() {
+    return this._currentUserId;
+  }
+
+  public get roomName() {
+    return this._roomName;
+  }
+
+  public get mapName() {
+    return this._mapName;
+  }
+
+  public get roomId() {
+    return this._roomId;
+  }
+
+  private _players = signal<Player[]>([
     { name: 'STEVENSM19', status: 'creator' },
     { name: 'ESPERANDO...', status: 'empty' },
     { name: 'ESPERANDO...', status: 'empty' },
     { name: 'ESPERANDO...', status: 'empty' },
   ]);
+
+  readonly players = this._players.asReadonly();
 
   public messages = signal<ChatMessage[]>([]);
 
@@ -47,12 +70,24 @@ export class GameService {
 
     this.signalrService.on('UpdatePlayerList', (players: Player[]) => {
       console.log('UpdatePlayerList received');
-      this.players.set(players);
+      this._players.set(players);
     });
 
     this.signalrService.on('ReceiveMessage', (message: ChatMessage) => {
       console.log('ReceiveMessage received');
       this.addMessage(message);
+    });
+  }
+
+  public updatePlayerList(newPlayer: Player) {
+    this._players.update((currentPlayers) => {
+      const emptyIndex = currentPlayers.findIndex((p) => p.status === 'empty');
+      if (emptyIndex !== -1) {
+        const updatedPlayers = [...currentPlayers];
+        updatedPlayers[emptyIndex] = newPlayer;
+        return updatedPlayers;
+      }
+      return [...currentPlayers, newPlayer];
     });
   }
 
@@ -108,6 +143,10 @@ export class GameService {
     }, 1000);
   }
 
+  private addMessage(message: ChatMessage) {
+    this.messages.update((msgs) => [...msgs, message]);
+  }
+
   public sendMessage(text: string) {
     this.signalrService.invoke('SendMessage', text);
 
@@ -124,19 +163,60 @@ export class GameService {
     this.addMessage(newMessage);
   }
 
-  private addMessage(message: ChatMessage) {
-    this.messages.update((msgs) => [...msgs, message]);
+  public assignPositions() {
+    this._players.update((currentPlayers) =>
+      currentPlayers.map((player) => ({
+        ...player,
+        x: Math.floor(Math.random() * 12) + 1,
+        y: Math.floor(Math.random() * 8) + 1,
+      })),
+    );
   }
 
-  private updatePlayerList(newPlayer: Player) {
-    this.players.update((currentPlayers) => {
-      const emptyIndex = currentPlayers.findIndex((p) => p.status === 'empty');
-      if (emptyIndex !== -1) {
-        const updatedPlayers = [...currentPlayers];
-        updatedPlayers[emptyIndex] = newPlayer;
-        return updatedPlayers;
-      }
-      return [...currentPlayers, newPlayer];
-    });
+  public movePlayer(direction: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT') {
+    const players = this.players();
+    const currentUser = players.find(
+      (p) => p.isCurrentUser || p.name === 'STEVENSM19',
+    );
+
+    if (!currentUser || !currentUser.x || !currentUser.y) return;
+
+    let newX = currentUser.x;
+    let newY = currentUser.y;
+
+    const step = 0.15;
+
+    switch (direction) {
+      case 'UP':
+        newY = Math.max(1, currentUser.y - step);
+        break;
+      case 'DOWN':
+        newY = Math.min(8, currentUser.y + step);
+        break;
+      case 'LEFT':
+        newX = Math.max(1, currentUser.x - step);
+        break;
+      case 'RIGHT':
+        newX = Math.min(12, currentUser.x + step);
+        break;
+    }
+
+    if (newX !== currentUser.x || newY !== currentUser.y) {
+      this.signalrService.invoke('MovePlayer', { x: newX, y: newY });
+      console.log(`Player ${currentUser.name} moved: ${direction} to (${newX}, ${newY})`);
+
+      this.updatePlayerPosition(currentUser.name, newX, newY);
+    }
+  }
+
+  private updatePlayerPosition(name: string, x: number, y: number) {
+    this._players.update((currentPlayers) =>
+      currentPlayers.map((p) => {
+        if (p.name === name) {
+          return { ...p, x, y };
+        }
+        return p;
+      }),
+    );
   }
 }
