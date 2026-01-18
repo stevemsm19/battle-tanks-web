@@ -3,7 +3,7 @@
     <h1 class="title">SALA DE ESPERA</h1>
     <p class="subtitle">
       ID: {{ roomId }}
-      <br>
+      <br />
       PARTIDA: {{ roomName }} - {{ mapName }}
     </p>
   </header>
@@ -50,4 +50,8 @@
       <app-chat></app-chat>
     </section>
   </div>
+  <footer class="action-bar">
+    <button class="btn abandon-btn">ABANDONAR</button>
+    <button class="btn start-btn" (click)="startGame()">INICIAR PARTIDA</button>
+  </footer>
 </div>

@@ -47,9 +47,9 @@
 .chat-section {
   display: flex;
   flex-direction: column;
-  height: 100%; 
-  overflow: hidden; 
-  min-height: 0; 
+  height: 100%;
+  overflow: hidden;
+  min-height: 0;
 }
 
 .section-title {
@@ -152,6 +152,7 @@
   .invite-btn {
     margin-top: 1rem;
     padding: 1rem;
+    font-family: inherit;
     background: transparent;
     border: 2px solid white;
     color: white;
@@ -169,6 +170,50 @@
   }
 }
 
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #333;
+
+  .btn {
+    padding: 1rem 2rem;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+
+    &.abandon-btn {
+      background: transparent;
+      color: white;
+      border-color: white;
+
+      &:hover {
+        background: white;
+        color: black;
+      }
+    }
+
+    &.start-btn {
+      background: #ffd700;
+      color: black;
+      border-color: #ffd700;
+
+      &:hover {
+        background: #fff;
+        border-color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+      }
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .main-content {
     grid-template-columns: 1fr;
@@ -177,5 +222,12 @@
 
   .room-header .title {
     font-size: 2rem;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    .btn {
+      width: 100%;
+    }
   }
 }
