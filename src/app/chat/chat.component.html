@@ -1,11 +1,33 @@
-<div>
-  <input type="text" placeholder="Usuario" [(ngModel)]="user" />
-  <input type="text" placeholder="Mensaje" [(ngModel)]="message" />
-  <button (click)="sendMessage()">Enviar</button>
+<div class="chat-header">
+  <h2 class="section-title"><i class="icon-chat"></i> CHAT DE SALA</h2>
+  <span class="channel-info">CANAL: GLOBAL</span>
 </div>
 
-<ul>
-  <li *ngFor="let msg of messages">
-    {{ msg }}
-  </li>
-</ul>
+<div class="chat-history">
+  @for (msg of messages; track msg.time) {
+    <div
+      class="chat-message"
+      [class.mine]="msg.senderId === currentUserId"
+      [class.other]="msg.senderId !== currentUserId"
+    >
+      <div class="message-header">
+        <span class="sender">{{ msg.sender }}</span>
+        <span class="time">{{ msg.time }}</span>
+      </div>
+      <div class="message-body">
+        {{ msg.text }}
+      </div>
+    </div>
+  }
+</div>
+
+<div class="chat-input-area">
+  <input
+    type="text"
+    [(ngModel)]="newMessage"
+    (keyup.enter)="sendMessage()"
+    placeholder="ESCRIBE MENSAJE..."
+    class="chat-input"
+  />
+  <button (click)="sendMessage()" class="send-btn">></button>
+</div>

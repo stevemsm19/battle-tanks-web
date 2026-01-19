@@ -1,0 +1,26 @@
+<div class="board-container">
+  <div class="board-header">
+    <h1 class="title">BATTLE TANKS</h1>
+    <p class="subtitle">MAPA: {{ mapName }}</p>
+  </div>
+
+  <div class="battlefield">
+    @for (player of activePlayers(); track player.name) {
+      <div
+        class="tank-unit"
+        [style.transform]="
+          'translate(' +
+          (player.x! - 1) * 100 +
+          '%, ' +
+          (player.y! - 1) * 100 +
+          '%)'
+        "
+      >
+        <div class="tank-body">
+          <div class="tank-turret"></div>
+        </div>
+        <div class="tank-name">{{ player.name }}</div>
+      </div>
+    }
+  </div>
+</div>

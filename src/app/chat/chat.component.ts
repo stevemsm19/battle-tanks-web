@@ -1,34 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { SignalRService } from '../services/signalr.service';
+import { GameService } from '../services/game.service';
 
 @Component({
   selector: 'app-chat',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './chat.component.html'
+  templateUrl: './chat.component.html',
+  styleUrl: './chat.component.scss',
 })
-export class ChatComponent implements OnInit {
+export class ChatComponent {
+  private gameService = inject(GameService);
 
-  user: string = '';
-  message: string = '';
-  messages: string[] = [];
-
-  constructor(private signalRService: SignalRService) {}
-
-  ngOnInit(): void {
-    this.signalRService.startConnection();
-
-    this.signalRService.onMessageReceived((user, message) => {
-      this.messages.push(`${user}: ${message}`);
-    });
+  get messages() {
+    return this.gameService.messages();
   }
 
-  sendMessage(): void {
-    if (this.user && this.message) {
-      this.signalRService.sendMessage(this.user, this.message);
-      this.message = '';
+  newMessage = '';
+
+  currentUserId = this.gameService.currentUserId;
+
+  sendMessage() {
+    if (this.newMessage.trim()) {
+      this.gameService.sendMessage(this.newMessage);
+      this.newMessage = '';
     }
   }
 }

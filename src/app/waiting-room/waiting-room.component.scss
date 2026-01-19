@@ -1,0 +1,233 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  background-color: #050510;
+  color: #fff;
+  font-family: "VCR OSD Mono", monospace;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.waiting-room-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.room-header {
+  text-align: center;
+  margin-bottom: 1rem;
+
+  .title {
+    font-size: 3rem;
+    color: #ffd700;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .subtitle {
+    margin-top: 0.5rem;
+    font-size: 1.2rem;
+    color: #ccc;
+    text-transform: uppercase;
+  }
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 2rem;
+  height: 600px;
+}
+
+.players-section,
+.chat-section {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.players-section {
+  .players-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    border: 2px solid white;
+    background-color: #000;
+  }
+
+  .player-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border: 2px solid #333;
+    transition: all 0.2s;
+
+    &.creator {
+      border-color: #ffd700;
+      .name-container {
+        color: #ffd700;
+      }
+    }
+
+    &.ready {
+      border-color: #fff;
+    }
+
+    &.waiting {
+      border-color: #fff;
+    }
+
+    &.empty {
+      border: 2px dashed #555;
+      color: #555;
+
+      .player-name {
+        font-style: italic;
+      }
+    }
+
+    .player-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .avatar-placeholder {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .name-container {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .player-name {
+      font-size: 1rem;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .creator-badge {
+      font-size: 0.7rem;
+      color: #ffd700;
+    }
+
+    .status-icon {
+      font-size: 1.2rem;
+
+      &.star {
+        color: #ffd700;
+      }
+      &.check {
+        color: #00ff00;
+      }
+      &.hourglass {
+        color: #ffaa00;
+      }
+    }
+  }
+
+  .invite-btn {
+    margin-top: 1rem;
+    padding: 1rem;
+    font-family: inherit;
+    background: transparent;
+    border: 2px solid white;
+    color: white;
+    font-size: 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background 0.2s,
+      color 0.2s;
+
+    &:hover {
+      background: white;
+      color: black;
+    }
+  }
+}
+
+.action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #333;
+
+  .btn {
+    padding: 1rem 2rem;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+
+    &.abandon-btn {
+      background: transparent;
+      color: white;
+      border-color: white;
+
+      &:hover {
+        background: white;
+        color: black;
+      }
+    }
+
+    &.start-btn {
+      background: #ffd700;
+      color: black;
+      border-color: #ffd700;
+
+      &:hover {
+        background: #fff;
+        border-color: #fff;
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .room-header .title {
+    font-size: 2rem;
+  }
+
+  .action-bar {
+    flex-direction: column;
+    .btn {
+      width: 100%;
+    }
+  }
+}
