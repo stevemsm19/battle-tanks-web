@@ -1,5 +1,9 @@
 export interface Player {
   id: string;
-  x: number;
-  y: number;
+  name: string;
+  status: 'creator' | 'ready' | 'waiting' | 'empty';
+  avatar?: string;
+  isCurrentUser?: boolean;
+  x?: number;
+  y?: number;
 }

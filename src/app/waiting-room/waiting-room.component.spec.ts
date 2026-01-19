@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideStore } from '@ngrx/store';
+import { playerReducer } from '../store/reducer/player.reducer';
 
 import { WaitingRoomComponent } from './waiting-room.component';
 
@@ -8,9 +10,9 @@ describe('WaitingRoomComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WaitingRoomComponent]
-    })
-    .compileComponents();
+      imports: [WaitingRoomComponent],
+      providers: [provideStore({ players: playerReducer })],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(WaitingRoomComponent);
     component = fixture.componentInstance;

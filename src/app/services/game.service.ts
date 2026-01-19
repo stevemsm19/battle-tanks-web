@@ -1,14 +1,21 @@
 import { Injectable, signal, inject } from '@angular/core';
 import { SignalrService } from './signalr.service';
-
-export interface Player {
-  name: string;
-  status: 'creator' | 'ready' | 'waiting' | 'empty';
-  avatar?: string;
-  isCurrentUser?: boolean;
-  x?: number;
-  y?: number;
-}
+import { Player } from '../models/player.model';
+import { Store } from '@ngrx/store';
+import * as PlayerActions from '../store/actions/player.actions';
+import {
+  selectAllPlayers,
+  selectCurrentUser,
+} from '../store/selector/player.selectors';
+import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  calculateNewPosition,
+  generateRandomPositions,
+} from '../shared/utils/game-logic.utils';
+import {
+  simulateIncomingPlayers,
+  simulateIncomingMessages,
+} from '../shared/utils/simulation.utils';
 
 export interface ChatMessage {
   senderId: string;
@@ -22,6 +29,8 @@ export interface ChatMessage {
 })
 export class GameService {
   private signalrService = inject(SignalrService);
+  private store = inject(Store);
+
   readonly _currentUserId = '1';
   private _roomName = 'TEST';
   private _mapName = 'TESTMAP';
@@ -43,14 +52,10 @@ export class GameService {
     return this._roomId;
   }
 
-  private _players = signal<Player[]>([
-    { name: 'STEVENSM19', status: 'creator' },
-    { name: 'ESPERANDO...', status: 'empty' },
-    { name: 'ESPERANDO...', status: 'empty' },
-    { name: 'ESPERANDO...', status: 'empty' },
-  ]);
-
-  readonly players = this._players.asReadonly();
+  readonly players = toSignal(this.store.select(selectAllPlayers), {
+    initialValue: [] as Player[],
+  });
+  readonly currentUser = toSignal(this.store.select(selectCurrentUser));
 
   public messages = signal<ChatMessage[]>([]);
 
@@ -58,19 +63,18 @@ export class GameService {
     this.addListeners();
 
     //TODO: Remove when backend is ready
-    this.simulateIncomingPlayers();
-    this.simulateIncomingMessages();
+    this.startSimulations();
   }
 
   private addListeners() {
     this.signalrService.on('PlayerJoined', (player: Player) => {
       console.log('Player joined: ' + player.name);
-      this.updatePlayerList(player);
+      this.store.dispatch(PlayerActions.addPlayer({ player }));
     });
 
     this.signalrService.on('UpdatePlayerList', (players: Player[]) => {
       console.log('UpdatePlayerList received');
-      this._players.set(players);
+      this.store.dispatch(PlayerActions.setPlayers({ players }));
     });
 
     this.signalrService.on('ReceiveMessage', (message: ChatMessage) => {
@@ -79,68 +83,19 @@ export class GameService {
     });
   }
 
-  public updatePlayerList(newPlayer: Player) {
-    this._players.update((currentPlayers) => {
-      const emptyIndex = currentPlayers.findIndex((p) => p.status === 'empty');
-      if (emptyIndex !== -1) {
-        const updatedPlayers = [...currentPlayers];
-        updatedPlayers[emptyIndex] = newPlayer;
-        return updatedPlayers;
-      }
-      return [...currentPlayers, newPlayer];
-    });
-  }
-
-  private simulateIncomingPlayers() {
+  private startSimulations() {
     const mockPlayers: Player[] = [
-      { name: 'PIPE123', status: 'ready' },
-      { name: 'TU_MOM12', status: 'ready' },
+      { id: '2', name: 'PIPE123', status: 'ready', x: 0, y: 0 },
+      { id: '3', name: 'TU_MOM12', status: 'ready', x: 0, y: 0 },
     ];
+    simulateIncomingPlayers(this.store, mockPlayers);
 
-    let index = 0;
-    const interval = setInterval(() => {
-      if (index < mockPlayers.length) {
-        this.updatePlayerList(mockPlayers[index]);
-        index++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 2000);
-  }
-
-  private simulateIncomingMessages() {
     const mockMessages: ChatMessage[] = [
-      {
-        senderId: '1',
-        sender: 'STEVENSM19',
-        text: 'LISTOS?',
-        time: '13:02',
-      },
-      {
-        senderId: '2',
-        sender: 'PIPE123',
-        text: 'YA TU SABE',
-        time: '13:03',
-      },
-      {
-        senderId: '3',
-        sender: 'TU_MOM12',
-        text: 'FALTA UNO',
-        time: '13:05',
-      },
+      { senderId: '1', sender: 'STEVENSM19', text: 'LISTOS?', time: '13:02' },
+      { senderId: '2', sender: 'PIPE123', text: 'YA TU SABE', time: '13:03' },
+      { senderId: '3', sender: 'TU_MOM12', text: 'FALTA UNO', time: '13:05' },
     ];
-
-    let index = 0;
-    setTimeout(() => {
-      const interval = setInterval(() => {
-        if (index < mockMessages.length) {
-          this.addMessage(mockMessages[index]);
-          index++;
-        } else {
-          clearInterval(interval);
-        }
-      }, 2500);
-    }, 1000);
+    simulateIncomingMessages(mockMessages, (msg) => this.addMessage(msg));
   }
 
   private addMessage(message: ChatMessage) {
@@ -164,59 +119,42 @@ export class GameService {
   }
 
   public assignPositions() {
-    this._players.update((currentPlayers) =>
-      currentPlayers.map((player) => ({
-        ...player,
-        x: Math.floor(Math.random() * 12) + 1,
-        y: Math.floor(Math.random() * 8) + 1,
-      })),
-    );
+    const updatedPlayers = generateRandomPositions(this.players());
+    this.store.dispatch(PlayerActions.setPlayers({ players: updatedPlayers }));
   }
 
   public movePlayer(direction: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT') {
-    const players = this.players();
-    const currentUser = players.find(
-      (p) => p.isCurrentUser || p.name === 'STEVENSM19',
-    );
+    const currentUser = this.currentUser();
 
-    if (!currentUser || !currentUser.x || !currentUser.y) return;
+    if (!currentUser) return;
 
-    let newX = currentUser.x;
-    let newY = currentUser.y;
+    const newPos = calculateNewPosition(currentUser, direction);
 
-    const step = 0.15;
+    if (newPos) {
+      this.signalrService.invoke('MovePlayer', { x: newPos.x, y: newPos.y });
+      console.log(
+        `Player ${currentUser.name} moved: ${direction} to (${newPos.x}, ${newPos.y})`,
+      );
 
-    switch (direction) {
-      case 'UP':
-        newY = Math.max(1, currentUser.y - step);
-        break;
-      case 'DOWN':
-        newY = Math.min(8, currentUser.y + step);
-        break;
-      case 'LEFT':
-        newX = Math.max(1, currentUser.x - step);
-        break;
-      case 'RIGHT':
-        newX = Math.min(12, currentUser.x + step);
-        break;
-    }
-
-    if (newX !== currentUser.x || newY !== currentUser.y) {
-      this.signalrService.invoke('MovePlayer', { x: newX, y: newY });
-      console.log(`Player ${currentUser.name} moved: ${direction} to (${newX}, ${newY})`);
-
-      this.updatePlayerPosition(currentUser.name, newX, newY);
+      this.store.dispatch(
+        PlayerActions.updatePlayerPosition({
+          name: currentUser.name,
+          x: newPos.x,
+          y: newPos.y,
+        }),
+      );
     }
   }
 
-  private updatePlayerPosition(name: string, x: number, y: number) {
-    this._players.update((currentPlayers) =>
-      currentPlayers.map((p) => {
-        if (p.name === name) {
-          return { ...p, x, y };
-        }
-        return p;
-      }),
-    );
+  public addPlayer(newPlayer: Player) {
+    this.store.dispatch(PlayerActions.addPlayer({ player: newPlayer }));
+  }
+
+  public removePlayer(name: string) {
+    this.store.dispatch(PlayerActions.removePlayer({ name }));
+  }
+
+  public updatePlayerPosition(name: string, x: number, y: number) {
+    this.store.dispatch(PlayerActions.updatePlayerPosition({ name, x, y }));
   }
 }
