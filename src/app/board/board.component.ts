@@ -1,16 +1,18 @@
 import { Component, inject, computed, HostListener } from '@angular/core';
 import { GameService } from '../services/game.service';
+import { ChatComponent } from '../chat/chat.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [],
+  imports: [ChatComponent],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
 })
 export class BoardComponent {
   private gameService = inject(GameService);
   mapName = this.gameService.mapName;
+  currentUser = this.gameService.currentUser;
 
   activePlayers = computed(() => {
     return this.gameService.players().filter((p) => p.status !== 'empty');

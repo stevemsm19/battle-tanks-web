@@ -4,30 +4,70 @@
     <p class="subtitle">MAPA: {{ mapName }}</p>
   </div>
 
-  <div class="battlefield">
-    @for (player of activePlayers(); track player.name) {
-      <div
-        class="tank-unit"
-        [style.left]="
-          'calc(' +
-          ((player.x! - 1) / 11) * 100 +
-          '% - ' +
-          ((player.x! - 1) / 11) * 60 +
-          'px)'
-        "
-        [style.top]="
-          'calc(' +
-          ((player.y! - 1) / 7) * 100 +
-          '% - ' +
-          ((player.y! - 1) / 7) * 40 +
-          'px)'
-        "
-      >
-        <div class="tank-body">
-          <div class="tank-turret"></div>
+  <div class="game-content">
+    <div class="battlefield">
+      @for (player of activePlayers(); track player.name) {
+        <div
+          class="tank-unit"
+          [style.left]="
+            'calc(' +
+            ((player.x! - 1) / 11) * 100 +
+            '% - ' +
+            ((player.x! - 1) / 11) * 60 +
+            'px)'
+          "
+          [style.top]="
+            'calc(' +
+            ((player.y! - 1) / 7) * 100 +
+            '% - ' +
+            ((player.y! - 1) / 7) * 40 +
+            'px)'
+          "
+        >
+          <div class="tank-body">
+            <div class="tank-turret"></div>
+          </div>
+          <div class="tank-name">{{ player.name }}</div>
         </div>
-        <div class="tank-name">{{ player.name }}</div>
+      }
+    </div>
+
+    <div class="dashboard-panel">
+      <div class="stats-container">
+        <div class="panel-header">ESTADO</div>
+
+        <div class="stat-group">
+          <label>JUGADOR</label>
+          <div class="value">{{ currentUser()?.name }}</div>
+        </div>
+
+        <div class="stat-group">
+          <label>SALUD</label>
+          <div class="bar-container">
+            <div class="bar-fill" style="width: 100%"></div>
+          </div>
+          <div class="value-text">100%</div>
+        </div>
+
+        <div class="stat-group">
+          <label>PUNTAJE</label>
+          <div class="value highlight">00500</div>
+        </div>
+
+        <div class="stat-group">
+          <label>MUNICIONES</label>
+          <div class="ammo-grid">
+            @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
+              <div class="shell"></div>
+            }
+          </div>
+          <div class="value-text">10 / 20</div>
+        </div>
       </div>
-    }
+
+      <div class="chat-container">
+        <app-chat></app-chat>
+      </div>
+    </div>
   </div>
 </div>
