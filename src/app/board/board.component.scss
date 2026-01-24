@@ -41,8 +41,9 @@
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   grid-template-rows: repeat(8, 1fr);
+  position: relative; 
   gap: 1rem;
-
+  width: 75%;
   background-color: #1a1a1a;
   border: 4px solid #333;
   border-radius: 8px;
@@ -50,23 +51,35 @@
 }
 
 .tank-unit {
+  position: absolute; 
+  width: 60px; 
+  height: 40px; 
   display: grid;
   place-items: center;
+  transition: all 0.1s linear; 
+  z-index: 10;
 }
 
 .tank-name {
+  position: absolute;
+  top: 45px; 
+  width: 100px;
+  text-align: center;
   font-size: 0.8rem;
   color: #fff;
   text-shadow: 1px 1px 2px black;
+  pointer-events: none;
 }
+
 .tank-body {
-  width: 60px;
-  height: 40px;
+  width: 100%;
+  height: 100%;
   background-color: #4caf50;
   position: relative;
   border: 2px solid #2e7d32;
   border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box; 
 }
 
 .tank-turret {
@@ -79,4 +92,5 @@
   transform: translateX(-50%);
   border: 2px solid #1b5e20;
   border-radius: 2px;
+  box-sizing: border-box;
 }

@@ -35,7 +35,7 @@ export const calculateNewPosition = (
 export const generateRandomPositions = (players: Player[]): Player[] => {
   return players.map((player) => ({
     ...player,
-    x: Math.floor(Math.random() * 12) + 1,
-    y: Math.floor(Math.random() * 8) + 1,
+    x: Math.random() * 11 + 1,
+    y: Math.random() * 7 + 1,
   }));
 };
