@@ -1,19 +1,24 @@
 :host {
-  display: block;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
   background-color: #050510;
   color: #fff;
   font-family: "VCR OSD Mono", monospace;
   padding: 2rem;
   box-sizing: border-box;
+  overflow: hidden;
 }
 
 .waiting-room-container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  min-height: 0;
+  width: 100%;
+  flex: 1;
 }
 
 .room-header {
@@ -40,7 +45,8 @@
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 2rem;
-  height: 600px;
+  flex: 1;
+  min-height: 0;
 }
 
 .players-section,
@@ -48,8 +54,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: hidden;
-  min-height: 0;
+  overflow-y: auto;
+  flex: 1;
 }
 
 .section-title {
