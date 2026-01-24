@@ -124,8 +124,19 @@
 
     .bar-fill {
       height: 100%;
-      background-color: #f44336;
-      transition: width 0.3s ease;
+      transition:
+        width 0.3s ease,
+        background-color 0.3s ease;
+
+      &.high {
+        background-color: #4caf50;
+      }
+      &.medium {
+        background-color: #ff9800;
+      }
+      &.low {
+        background-color: #f44336;
+      }
     }
 
     .value-text {
@@ -146,6 +157,17 @@
         border-radius: 2px;
         border: 1px solid #b8860b;
       }
+    }
+
+    .damage-simulation-btn {
+      padding: 2px 5px;
+      font-size: 0.6rem;
+      cursor: pointer;
+      background-color: #333;
+      color: #fff;
+      border: 1px solid #555;
+      border-radius: 4px;
+      text-transform: uppercase;
     }
   }
 }

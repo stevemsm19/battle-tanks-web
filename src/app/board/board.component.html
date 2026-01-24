@@ -44,9 +44,19 @@
         <div class="stat-group">
           <label>SALUD</label>
           <div class="bar-container">
-            <div class="bar-fill" style="width: 100%"></div>
+            <div
+              class="bar-fill"
+              [style.width.%]="health()"
+              [class]="healthStatus()"
+            ></div>
           </div>
-          <div class="value-text">100%</div>
+          <div class="value-text">{{ health() }}%</div>
+        </div>
+
+        <div class="stat-group">
+          <button (click)="takeDamage()" class="damage-simulation-btn">
+            DAÑO DE PRUEBA
+          </button>
         </div>
 
         <div class="stat-group">
