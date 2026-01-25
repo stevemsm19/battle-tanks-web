@@ -1,4 +1,4 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, signal, inject, WritableSignal } from '@angular/core';
 import { SignalrService } from './signalr.service';
 import { Player } from '../models/player.model';
 import { Store } from '@ngrx/store';
@@ -11,6 +11,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import {
   calculateNewPosition,
   generateRandomPositions,
+  MAP_MATRIX,
 } from '../shared/utils/game-logic.utils';
 import {
   simulateIncomingPlayers,
@@ -22,6 +23,14 @@ export interface ChatMessage {
   sender: string;
   text: string;
   time: string;
+}
+
+export interface Bullet {
+  id: string;
+  x: number;
+  y: number;
+  direction: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
+  ownerId: string;
 }
 
 @Injectable({
@@ -57,13 +66,22 @@ export class GameService {
   });
   readonly currentUser = toSignal(this.store.select(selectCurrentUser));
 
+  public mapMatrix: WritableSignal<number[][]> = signal(
+    JSON.parse(JSON.stringify(MAP_MATRIX)),
+  );
+  public bullets = signal<Bullet[]>([]);
+
   public messages = signal<ChatMessage[]>([]);
+
+  private lastShotTime = 0;
+  private readonly SHOOT_COOLDOWN = 500;
 
   constructor() {
     this.addListeners();
 
     //TODO: Remove when backend is ready
     this.startSimulations();
+    this.startGameLoop();
   }
 
   private addListeners() {
@@ -102,6 +120,81 @@ export class GameService {
     simulateIncomingMessages(mockMessages, (msg) => this.addMessage(msg));
   }
 
+  private startGameLoop() {
+    setInterval(() => {
+      this.updateBullets();
+    }, 50);
+  }
+
+  private updateBullets() {
+    this.bullets.update((currentBullets) => {
+      const remainingBullets: Bullet[] = [];
+      const BULLET_SIZE = 0.4;
+
+      for (const bullet of currentBullets) {
+        const speed = 0.5;
+        let nextX = bullet.x;
+        let nextY = bullet.y;
+
+        switch (bullet.direction) {
+          case 'UP':
+            nextY -= speed;
+            break;
+          case 'DOWN':
+            nextY += speed;
+            break;
+          case 'LEFT':
+            nextX -= speed;
+            break;
+          case 'RIGHT':
+            nextX += speed;
+            break;
+        }
+
+        if (nextX < 1 || nextX > 24 || nextY < 1 || nextY > 16) {
+          continue;
+        }
+        const startCol = Math.floor(nextX - 1);
+        const endCol = Math.floor(nextX - 1 + BULLET_SIZE);
+        const startRow = Math.floor(nextY - 1);
+        const endRow = Math.floor(nextY - 1 + BULLET_SIZE);
+
+        let hit = false;
+
+        collisionLoop: for (let r = startRow; r <= endRow; r++) {
+          for (let c = startCol; c <= endCol; c++) {
+            if (r >= 0 && r < 16 && c >= 0 && c < 24) {
+              const cell = this.mapMatrix()[r][c];
+              if (cell === 1) {
+                hit = true;
+                break collisionLoop;
+              } else if (cell === 2) {
+                hit = true;
+                this.destroyWall(r, c);
+                break collisionLoop;
+              }
+            }
+          }
+        }
+
+        if (hit) continue;
+
+        remainingBullets.push({ ...bullet, x: nextX, y: nextY });
+      }
+
+      return remainingBullets;
+    });
+  }
+
+  private destroyWall(row: number, col: number) {
+    this.mapMatrix.update((matrix) => {
+      const newMatrix = [...matrix];
+      newMatrix[row] = [...newMatrix[row]];
+      newMatrix[row][col] = 0;
+      return newMatrix;
+    });
+  }
+
   private addMessage(message: ChatMessage) {
     this.messages.update((msgs) => [...msgs, message]);
   }
@@ -129,14 +222,41 @@ export class GameService {
 
   public movePlayer(direction: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT') {
     const currentUser = this.currentUser();
-
     if (!currentUser) return;
 
-    const newPos = calculateNewPosition(currentUser, direction);
-
+    const newPos = calculateNewPosition(
+      currentUser,
+      direction,
+      this.mapMatrix(),
+    );
     if (newPos) {
       this.reportPlayerMove(newPos.x, newPos.y);
     }
+  }
+
+  public shoot() {
+    const user = this.currentUser();
+    if (!user || !user.x || !user.y) return;
+  }
+
+  public shootDirection(direction: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT') {
+    const user = this.currentUser();
+    if (!user || !user.x || !user.y) return;
+
+    const now = Date.now();
+    if (now - this.lastShotTime < this.SHOOT_COOLDOWN) return;
+
+    this.lastShotTime = now;
+
+    const bullet: Bullet = {
+      id: Math.random().toString(36),
+      x: user.x,
+      y: user.y,
+      direction,
+      ownerId: user.id,
+    };
+
+    this.bullets.update((b) => [...b, bullet]);
   }
 
   public reportPlayerMove(x: number, y: number) {
