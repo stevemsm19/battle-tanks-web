@@ -72,6 +72,7 @@ export class GameService {
   public bullets = signal<Bullet[]>([]);
 
   public messages = signal<ChatMessage[]>([]);
+  public score = signal(0);
 
   private lastShotTime = 0;
   private readonly SHOOT_COOLDOWN = 500;
@@ -193,6 +194,9 @@ export class GameService {
       newMatrix[row][col] = 0;
       return newMatrix;
     });
+
+    // Increment score
+    this.score.update((s) => s + 10);
   }
 
   private addMessage(message: ChatMessage) {

@@ -22,6 +22,11 @@ export class BoardComponent {
 
   mapMatrix = this.gameService.mapMatrix;
   bullets = this.gameService.bullets;
+  score = this.gameService.score;
+
+  formattedScore = computed(() => {
+    return this.score().toString().padStart(5, '0');
+  });
 
   private lastDirection: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' = 'UP';
 
