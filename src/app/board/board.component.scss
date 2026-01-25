@@ -115,6 +115,36 @@
   border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
   box-sizing: border-box;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+
+  &.high {
+    background-color: #4caf50;
+    border-color: #2e7d32;
+    .tank-turret {
+      background-color: #388e3c;
+      border-color: #1b5e20;
+    }
+  }
+
+  &.medium {
+    background-color: #ff9800;
+    border-color: #e65100;
+    .tank-turret {
+      background-color: #f57c00;
+      border-color: #bf360c;
+    }
+  }
+
+  &.low {
+    background-color: #f44336;
+    border-color: #b71c1c;
+    .tank-turret {
+      background-color: #d32f2f;
+      border-color: #c62828;
+    }
+  }
 }
 
 .tank-turret {

@@ -32,7 +32,12 @@
           [style.left]="'calc(' + ((player.x || 1) - 1) + ' * (100% / 24))'"
           [style.top]="'calc(' + ((player.y || 1) - 1) + ' * (100% / 16))'"
         >
-          <div class="tank-body">
+          <div
+            class="tank-body"
+            [class]="
+              player.name === currentUser()?.name ? healthStatus() : 'high'
+            "
+          >
             <div class="tank-turret"></div>
           </div>
           <div class="tank-name">{{ player.name }}</div>
