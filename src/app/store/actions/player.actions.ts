@@ -13,7 +13,12 @@ export const removePlayer = createAction(
 
 export const updatePlayerPosition = createAction(
   '[Player] Update Player Position',
-  props<{ name: string; x: number; y: number }>(),
+  props<{
+    name: string;
+    x: number;
+    y: number;
+    direction?: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
+  }>(),
 );
 
 export const setPlayers = createAction(

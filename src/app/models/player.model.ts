@@ -6,4 +6,5 @@ export interface Player {
   isCurrentUser?: boolean;
   x?: number;
   y?: number;
+  direction?: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT';
 }

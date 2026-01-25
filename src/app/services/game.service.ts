@@ -234,7 +234,7 @@ export class GameService {
       this.mapMatrix(),
     );
     if (newPos) {
-      this.reportPlayerMove(newPos.x, newPos.y);
+      this.reportPlayerMove(newPos.x, newPos.y, direction);
     }
   }
 
@@ -263,18 +263,25 @@ export class GameService {
     this.bullets.update((b) => [...b, bullet]);
   }
 
-  public reportPlayerMove(x: number, y: number) {
+  public reportPlayerMove(
+    x: number,
+    y: number,
+    direction: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT',
+  ) {
     const currentUser = this.currentUser();
     if (!currentUser) return;
 
-    this.signalrService.invoke('MovePlayer', { x, y });
-    console.log(`Player ${currentUser.name} moved to (${x}, ${y})`);
+    this.signalrService.invoke('MovePlayer', { x, y, direction });
+    console.log(
+      `Player ${currentUser.name} moved to (${x}, ${y}) facing ${direction}`,
+    );
 
     this.store.dispatch(
       PlayerActions.updatePlayerPosition({
         name: currentUser.name,
         x,
         y,
+        direction,
       }),
     );
   }
