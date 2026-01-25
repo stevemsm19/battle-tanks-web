@@ -7,11 +7,12 @@ import {
 } from '@angular/core';
 import { GameService } from '../services/game.service';
 import { ChatComponent } from '../chat/chat.component';
+import { LowerCasePipe } from '@angular/common';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [ChatComponent],
+  imports: [ChatComponent, LowerCasePipe],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
 })

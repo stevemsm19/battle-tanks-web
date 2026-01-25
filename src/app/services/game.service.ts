@@ -195,7 +195,6 @@ export class GameService {
       return newMatrix;
     });
 
-    // Increment score
     this.score.update((s) => s + 10);
   }
 

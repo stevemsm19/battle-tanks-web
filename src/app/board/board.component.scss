@@ -92,7 +92,7 @@
 
 .tank-name {
   position: absolute;
-  top: 50%;
+  top: 100%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: 100%;
@@ -152,12 +152,27 @@
   height: 60%;
   background-color: #388e3c;
   position: absolute;
-  top: -30%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform-origin: center center;
+  transform: translate(-50%, -50%); 
   border: 2px solid #1b5e20;
   border-radius: 2px;
   box-sizing: border-box;
+  transition: transform 0.2s ease;
+
+  &.up {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  &.down {
+    transform: translate(-50%, -50%) rotate(180deg);
+  }
+  &.left {
+    transform: translate(-50%, -50%) rotate(-90deg);
+  }
+  &.right {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
 }
 
 .dashboard-panel {

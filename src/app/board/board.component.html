@@ -38,7 +38,10 @@
               player.name === currentUser()?.name ? healthStatus() : 'high'
             "
           >
-            <div class="tank-turret"></div>
+            <div
+              class="tank-turret"
+              [class]="player.direction || 'UP' | lowercase"
+            ></div>
           </div>
           <div class="tank-name">{{ player.name }}</div>
         </div>
