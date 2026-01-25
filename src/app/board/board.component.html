@@ -18,6 +18,14 @@
         }
       }
 
+      @for (bullet of bullets(); track bullet.id) {
+        <div
+          class="bullet"
+          [style.left]="'calc(' + (bullet.x - 1) + ' * (100% / 24))'"
+          [style.top]="'calc(' + (bullet.y - 1) + ' * (100% / 16))'"
+        ></div>
+      }
+
       @for (player of activePlayers(); track player.name) {
         <div
           class="tank-unit"

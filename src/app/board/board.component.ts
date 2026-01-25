@@ -8,8 +8,6 @@ import {
 import { GameService } from '../services/game.service';
 import { ChatComponent } from '../chat/chat.component';
 
-import { MAP_MATRIX } from '../shared/utils/game-logic.utils';
-
 @Component({
   selector: 'app-board',
   standalone: true,
@@ -22,7 +20,10 @@ export class BoardComponent {
   mapName = this.gameService.mapName;
   currentUser = this.gameService.currentUser;
 
-  mapMatrix = signal<number[][]>(MAP_MATRIX);
+  mapMatrix = this.gameService.mapMatrix;
+  bullets = this.gameService.bullets;
+
+  private lastDirection: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' = 'UP';
 
   health = signal(100);
 
@@ -50,22 +51,29 @@ export class BoardComponent {
       case 'ArrowUp':
       case 'w':
       case 'W':
+        this.lastDirection = 'UP';
         this.gameService.movePlayer('UP');
         break;
       case 'ArrowDown':
       case 's':
       case 'S':
+        this.lastDirection = 'DOWN';
         this.gameService.movePlayer('DOWN');
         break;
       case 'ArrowLeft':
       case 'a':
       case 'A':
+        this.lastDirection = 'LEFT';
         this.gameService.movePlayer('LEFT');
         break;
       case 'ArrowRight':
       case 'd':
       case 'D':
+        this.lastDirection = 'RIGHT';
         this.gameService.movePlayer('RIGHT');
+        break;
+      case ' ':
+        this.gameService.shootDirection(this.lastDirection);
         break;
     }
   }

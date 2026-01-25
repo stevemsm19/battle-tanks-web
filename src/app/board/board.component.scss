@@ -69,6 +69,17 @@
   }
 }
 
+.bullet {
+  position: absolute;
+  width: calc(100% / 24 / 4);
+  height: calc(100% / 16 / 4);
+  background-color: #ffff00;
+  border-radius: 50%;
+  box-shadow: 0 0 5px #ff9800;
+  z-index: 15;
+  transform: translate(150%, 150%);
+}
+
 .tank-unit {
   position: absolute;
   width: calc(100% / 24);
