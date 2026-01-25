@@ -39,10 +39,15 @@ export const playerReducer = createReducer(
     ),
   })),
 
-  on(PlayerActions.updatePlayerPosition, (state, { name, x, y }) => ({
-    ...state,
-    players: state.players.map((p) => (p.name === name ? { ...p, x, y } : p)),
-  })),
+  on(
+    PlayerActions.updatePlayerPosition,
+    (state, { name, x, y, direction }) => ({
+      ...state,
+      players: state.players.map((p) =>
+        p.name === name ? { ...p, x, y, direction } : p,
+      ),
+    }),
+  ),
 
   on(PlayerActions.setPlayers, (state, { players }) => ({
     ...state,
