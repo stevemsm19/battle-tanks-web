@@ -8,6 +8,8 @@ import {
 import { GameService } from '../services/game.service';
 import { ChatComponent } from '../chat/chat.component';
 
+import { MAP_MATRIX } from '../shared/utils/game-logic.utils';
+
 @Component({
   selector: 'app-board',
   standalone: true,
@@ -19,6 +21,8 @@ export class BoardComponent {
   private gameService = inject(GameService);
   mapName = this.gameService.mapName;
   currentUser = this.gameService.currentUser;
+
+  mapMatrix = signal<number[][]>(MAP_MATRIX);
 
   health = signal(100);
 
@@ -39,6 +43,9 @@ export class BoardComponent {
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
+    const user = this.currentUser();
+    if (!user) return;
+
     switch (event.key) {
       case 'ArrowUp':
       case 'w':
