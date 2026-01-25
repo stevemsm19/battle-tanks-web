@@ -12,16 +12,16 @@ export const calculateNewPosition = (
 
   switch (direction) {
     case 'UP':
-      newY = Math.max(1, currentUser.y - step);
+      newY = Math.max(1.2, currentUser.y - step);
       break;
     case 'DOWN':
-      newY = Math.min(8, currentUser.y + step);
+      newY = Math.min(7.8, currentUser.y + step);
       break;
     case 'LEFT':
-      newX = Math.max(1, currentUser.x - step);
+      newX = Math.max(1.2, currentUser.x - step);
       break;
     case 'RIGHT':
-      newX = Math.min(12, currentUser.x + step);
+      newX = Math.min(11.8, currentUser.x + step);
       break;
   }
 
@@ -35,7 +35,7 @@ export const calculateNewPosition = (
 export const generateRandomPositions = (players: Player[]): Player[] => {
   return players.map((player) => ({
     ...player,
-    x: Math.floor(Math.random() * 12) + 1,
-    y: Math.floor(Math.random() * 8) + 1,
+    x: Math.random() * 10 + 1.5,
+    y: Math.random() * 6 + 1.5,
   }));
 };

@@ -1,20 +1,41 @@
-import { Component, inject, computed, HostListener } from '@angular/core';
+import {
+  Component,
+  inject,
+  computed,
+  HostListener,
+  signal,
+} from '@angular/core';
 import { GameService } from '../services/game.service';
+import { ChatComponent } from '../chat/chat.component';
 
 @Component({
   selector: 'app-board',
   standalone: true,
-  imports: [],
+  imports: [ChatComponent],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
 })
 export class BoardComponent {
   private gameService = inject(GameService);
   mapName = this.gameService.mapName;
+  currentUser = this.gameService.currentUser;
+
+  health = signal(100);
+
+  healthStatus = computed(() => {
+    const h = this.health();
+    if (h > 50) return 'high';
+    if (h > 20) return 'medium';
+    return 'low';
+  });
 
   activePlayers = computed(() => {
     return this.gameService.players().filter((p) => p.status !== 'empty');
   });
+
+  takeDamage() {
+    this.health.update((h) => Math.max(0, h - 20));
+  }
 
   @HostListener('window:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {

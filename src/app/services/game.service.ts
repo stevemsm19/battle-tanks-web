@@ -84,10 +84,13 @@ export class GameService {
   }
 
   private startSimulations() {
-    const mockPlayers: Player[] = [
+    let mockPlayers: Player[] = [
       { id: '2', name: 'PIPE123', status: 'ready', x: 0, y: 0 },
       { id: '3', name: 'TU_MOM12', status: 'ready', x: 0, y: 0 },
     ];
+
+    mockPlayers = generateRandomPositions(mockPlayers);
+
     simulateIncomingPlayers(this.store, mockPlayers);
 
     const mockMessages: ChatMessage[] = [
