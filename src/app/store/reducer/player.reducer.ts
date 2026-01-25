@@ -8,7 +8,7 @@ export interface PlayerState {
 
 export const initialState: PlayerState = {
   players: [
-    { id: '1', name: 'STEVENSM19', status: 'creator' },
+    { id: '1', name: 'ESPERANDO...', status: 'empty' },
     { id: '2', name: 'ESPERANDO...', status: 'empty' },
     { id: '3', name: 'ESPERANDO...', status: 'empty' },
     { id: '4', name: 'ESPERANDO...', status: 'empty' },
@@ -33,7 +33,9 @@ export const playerReducer = createReducer(
   on(PlayerActions.removePlayer, (state, { name }) => ({
     ...state,
     players: state.players.map((p) =>
-      p.name === name ? { id: p.id, name: 'ESPERANDO...', status: 'empty' as const } : p,
+      p.name === name
+        ? { id: p.id, name: 'ESPERANDO...', status: 'empty' as const }
+        : p,
     ),
   })),
 

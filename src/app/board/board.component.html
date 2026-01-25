@@ -6,23 +6,23 @@
 
   <div class="game-content">
     <div class="battlefield">
+      @for (row of mapMatrix(); track $index; let r = $index) {
+        @for (cell of row; track $index; let c = $index) {
+          <div
+            class="cell"
+            [class.wall-indestructible]="cell === 1"
+            [class.wall-destructible]="cell === 2"
+            [style.grid-column]="c + 1"
+            [style.grid-row]="r + 1"
+          ></div>
+        }
+      }
+
       @for (player of activePlayers(); track player.name) {
         <div
           class="tank-unit"
-          [style.left]="
-            'calc(' +
-            ((player.x! - 1) / 11) * 100 +
-            '% - ' +
-            ((player.x! - 1) / 11) * 60 +
-            'px)'
-          "
-          [style.top]="
-            'calc(' +
-            ((player.y! - 1) / 7) * 100 +
-            '% - ' +
-            ((player.y! - 1) / 7) * 40 +
-            'px)'
-          "
+          [style.left]="'calc(' + ((player.x || 1) - 1) + ' * (100% / 24))'"
+          [style.top]="'calc(' + ((player.y || 1) - 1) + ' * (100% / 16))'"
         >
           <div class="tank-body">
             <div class="tank-turret"></div>

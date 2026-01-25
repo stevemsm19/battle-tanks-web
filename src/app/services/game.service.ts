@@ -85,6 +85,7 @@ export class GameService {
 
   private startSimulations() {
     let mockPlayers: Player[] = [
+      { id: '1', name: 'STEVENSM19', status: 'ready', x: 0, y: 0 },
       { id: '2', name: 'PIPE123', status: 'ready', x: 0, y: 0 },
       { id: '3', name: 'TU_MOM12', status: 'ready', x: 0, y: 0 },
     ];
@@ -134,19 +135,24 @@ export class GameService {
     const newPos = calculateNewPosition(currentUser, direction);
 
     if (newPos) {
-      this.signalrService.invoke('MovePlayer', { x: newPos.x, y: newPos.y });
-      console.log(
-        `Player ${currentUser.name} moved: ${direction} to (${newPos.x}, ${newPos.y})`,
-      );
-
-      this.store.dispatch(
-        PlayerActions.updatePlayerPosition({
-          name: currentUser.name,
-          x: newPos.x,
-          y: newPos.y,
-        }),
-      );
+      this.reportPlayerMove(newPos.x, newPos.y);
     }
+  }
+
+  public reportPlayerMove(x: number, y: number) {
+    const currentUser = this.currentUser();
+    if (!currentUser) return;
+
+    this.signalrService.invoke('MovePlayer', { x, y });
+    console.log(`Player ${currentUser.name} moved to (${x}, ${y})`);
+
+    this.store.dispatch(
+      PlayerActions.updatePlayerPosition({
+        name: currentUser.name,
+        x,
+        y,
+      }),
+    );
   }
 
   public addPlayer(newPlayer: Player) {
