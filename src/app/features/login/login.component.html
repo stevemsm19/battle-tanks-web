@@ -1,0 +1,35 @@
+<div class="login-container">
+  <form (ngSubmit)="login()">
+    <h2>Battle Tanks Login</h2>
+
+    <div>
+      <label for="email">Email</label>
+      <input
+        type="email"
+        id="email"
+        [(ngModel)]="email"
+        name="email"
+        required
+        placeholder="Enter your email"
+      />
+    </div>
+
+    <div>
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        [(ngModel)]="password"
+        name="password"
+        required
+        placeholder="Enter your password"
+      />
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+      {{ errorMessage }}
+    </div>
+
+    <button type="submit" [disabled]="!email || !password">Sign In</button>
+  </form>
+</div>
