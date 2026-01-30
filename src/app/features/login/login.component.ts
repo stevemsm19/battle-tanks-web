@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { app } from '../../firebase.config';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -17,22 +16,20 @@ export class LoginComponent {
   password = '';
   errorMessage = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+  ) {}
 
   login() {
-    const auth = getAuth(app);
     this.errorMessage = '';
 
-    signInWithEmailAndPassword(auth, this.email, this.password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        user.getIdToken().then((token) => {
-          localStorage.setItem('token', token);
-          this.router.navigate(['/waiting-room']);
-        });
+    this.authService
+      .login(this.email, this.password)
+      .then(() => {
+        this.router.navigate(['/waiting-room']);
       })
-      .catch((error) => {
+      .catch((error: any) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         console.error('Login error:', errorCode, errorMessage);
