@@ -72,5 +72,20 @@
       font-size: 0.85rem;
       text-align: center;
     }
+
+    .register-link {
+      text-align: center;
+      font-size: 0.8rem;
+      margin-top: 0.5rem;
+
+      a {
+        color: #28a745;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
   }
 }

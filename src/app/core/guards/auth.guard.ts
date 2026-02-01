@@ -18,7 +18,7 @@ export const publicGuard: CanActivateFn = (route, state) => {
   const token = localStorage.getItem('token');
 
   if (token) {
-    router.navigate(['/waiting-room']);
+    router.navigate(['/rooms']);
     return false;
   } else {
     return true;

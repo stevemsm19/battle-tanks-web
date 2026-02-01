@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -27,9 +27,10 @@ export class LoginComponent {
     this.authService
       .login(this.email, this.password)
       .then(() => {
-        this.router.navigate(['/waiting-room']);
+        this.router.navigate(['/rooms']);
       })
       .catch((error: any) => {
+        console.error('Login error:', error);
         const errorCode = error.code;
         const errorMessage = error.message;
         console.error('Login error:', errorCode, errorMessage);
