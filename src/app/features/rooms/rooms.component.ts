@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RoomService } from './services/room.service';
-import { Room } from '../../models/room.model';
+import { Room } from '../../shared/models/room.model';
 
 @Component({
   selector: 'app-rooms',

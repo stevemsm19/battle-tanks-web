@@ -1,22 +1,23 @@
 import { Injectable, signal, inject, WritableSignal } from '@angular/core';
-import { SignalrService } from './signalr.service';
-import { Player } from '../models/player.model';
+
+import { Player } from '../../../shared/models/player.model';
 import { Store } from '@ngrx/store';
-import * as PlayerActions from '../store/actions/player.actions';
+import * as PlayerActions from '../../../store/actions/player.actions';
 import {
   selectAllPlayers,
   selectCurrentUser,
-} from '../store/selector/player.selectors';
+} from '../../../store/selector/player.selectors';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   calculateNewPosition,
   generateRandomPositions,
   MAP_MATRIX,
-} from '../shared/utils/game-logic.utils';
+} from '../../../shared/utils/game-logic.utils';
 import {
   simulateIncomingPlayers,
   simulateIncomingMessages,
-} from '../shared/utils/simulation.utils';
+} from "../../../shared/utils/simulation.utils"
+import { SignalrService } from '../../../core/services/signalr.service';
 
 export interface ChatMessage {
   senderId: string;

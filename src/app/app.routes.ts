@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
-import { WaitingRoomComponent } from './waiting-room/waiting-room.component';
-import { BoardComponent } from './board/board.component';
-import { LoginComponent } from './features/login/login.component';
-import { RegisterComponent } from './features/register/register.component';
+
+import { LoginComponent } from './core/auth/pages/login/login.component';
+import { RegisterComponent } from './core/auth/pages/register/register.component';
 import { RoomsComponent } from './features/rooms/rooms.component';
 import { authGuard, publicGuard } from './core/guards/auth.guard';
+import { WaitingRoomComponent } from './features/waiting-room/waiting-room.component';
+import { BoardComponent } from './features/game/components/board/board.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },

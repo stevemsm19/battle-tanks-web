@@ -1,7 +1,7 @@
 import { Store } from '@ngrx/store';
-import { Player } from '../../models/player.model';
+import { Player } from '../models/player.model';
 import * as PlayerActions from '../../store/actions/player.actions';
-import { ChatMessage } from '../../services/game.service';
+import { ChatMessage } from '../../features/game/services/game.service';
 
 export const simulateIncomingPlayers = (
   store: Store,

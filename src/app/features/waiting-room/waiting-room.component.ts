@@ -1,9 +1,10 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GameService } from '../services/game.service';
-import { ChatComponent } from '../chat/chat.component';
+
 import { Router } from '@angular/router';
+import { ChatComponent } from '../game/components/chat/chat.component';
+import { GameService } from '../game/services/game.service';
 
 @Component({
   selector: 'app-waiting-room',

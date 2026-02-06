@@ -5,7 +5,7 @@ import {
   HostListener,
   signal,
 } from '@angular/core';
-import { GameService } from '../services/game.service';
+import { GameService } from '../../services/game.service';
 import { ChatComponent } from '../chat/chat.component';
 import { LowerCasePipe } from '@angular/common';
 

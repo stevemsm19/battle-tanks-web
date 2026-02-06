@@ -1,4 +1,4 @@
-import { Player } from '../../models/player.model';
+import { Player } from '../models/player.model';
 
 export const MAP_MATRIX = [
   [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],

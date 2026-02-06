@@ -1,5 +1,5 @@
 import { createAction, props } from '@ngrx/store';
-import { Player } from '../../models/player.model';
+import { Player } from '../../shared/models/player.model';
 
 export const addPlayer = createAction(
   '[Player] Add Player',

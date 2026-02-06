@@ -1,6 +1,6 @@
 import { createReducer, on } from '@ngrx/store';
-import { Player } from '../../models/player.model';
 import * as PlayerActions from '../actions/player.actions';
+import { Player } from '../../shared/models/player.model';
 
 export interface PlayerState {
   players: Player[];

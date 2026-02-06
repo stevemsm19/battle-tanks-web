@@ -6,7 +6,7 @@ import {
   onAuthStateChanged,
   User,
 } from 'firebase/auth';
-import { app } from '../../firebase.config';
+import { app } from '../../../firebase.config';
 import { HttpClientService } from './http-client.service';
 import { LocalStorageService } from './local-storage.service';
 import { Observable, firstValueFrom, take } from 'rxjs';
