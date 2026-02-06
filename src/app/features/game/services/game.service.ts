@@ -1,12 +1,6 @@
 import { Injectable, signal, inject, WritableSignal } from '@angular/core';
 
 import { Player } from '../../../shared/models/player.model';
-import { Store } from '@ngrx/store';
-import * as PlayerActions from '../../../store/actions/player.actions';
-import {
-  selectAllPlayers,
-  selectCurrentUser,
-} from '../../../store/selector/player.selectors';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
   calculateNewPosition,
@@ -16,8 +10,9 @@ import {
 import {
   simulateIncomingPlayers,
   simulateIncomingMessages,
-} from "../../../shared/utils/simulation.utils"
+} from '../../../shared/utils/simulation.utils';
 import { SignalrService } from '../../../core/services/signalr.service';
+import { PlayerStore } from '../store/player.store';
 
 export interface ChatMessage {
   senderId: string;
@@ -39,7 +34,7 @@ export interface Bullet {
 })
 export class GameService {
   private signalrService = inject(SignalrService);
-  private store = inject(Store);
+  private playerStore = inject(PlayerStore);
 
   readonly _currentUserId = '1';
   private _roomName = 'TEST';
@@ -62,10 +57,8 @@ export class GameService {
     return this._roomId;
   }
 
-  readonly players = toSignal(this.store.select(selectAllPlayers), {
-    initialValue: [] as Player[],
-  });
-  readonly currentUser = toSignal(this.store.select(selectCurrentUser));
+  readonly players = this.playerStore.players;
+  readonly currentUser = this.playerStore.currentUser;
 
   public mapMatrix: WritableSignal<number[][]> = signal(
     JSON.parse(JSON.stringify(MAP_MATRIX)),
@@ -89,12 +82,12 @@ export class GameService {
   private addListeners() {
     this.signalrService.on('PlayerJoined', (player: Player) => {
       console.log('Player joined: ' + player.name);
-      this.store.dispatch(PlayerActions.addPlayer({ player }));
+      this.playerStore.addPlayer(player);
     });
 
     this.signalrService.on('UpdatePlayerList', (players: Player[]) => {
       console.log('UpdatePlayerList received');
-      this.store.dispatch(PlayerActions.setPlayers({ players }));
+      this.playerStore.setPlayers(players);
     });
 
     this.signalrService.on('ReceiveMessage', (message: ChatMessage) => {
@@ -112,7 +105,8 @@ export class GameService {
 
     mockPlayers = generateRandomPositions(mockPlayers);
 
-    simulateIncomingPlayers(this.store, mockPlayers);
+    // Simulate direct store update as simulation utils previously dispatched actions
+    this.playerStore.setPlayers(mockPlayers);
 
     const mockMessages: ChatMessage[] = [
       { senderId: '1', sender: 'STEVENSM19', text: 'LISTOS?', time: '13:02' },
@@ -221,7 +215,7 @@ export class GameService {
 
   public assignPositions() {
     const updatedPlayers = generateRandomPositions(this.players());
-    this.store.dispatch(PlayerActions.setPlayers({ players: updatedPlayers }));
+    this.playerStore.setPlayers(updatedPlayers);
   }
 
   public movePlayer(direction: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT') {
@@ -276,25 +270,18 @@ export class GameService {
       `Player ${currentUser.name} moved to (${x}, ${y}) facing ${direction}`,
     );
 
-    this.store.dispatch(
-      PlayerActions.updatePlayerPosition({
-        name: currentUser.name,
-        x,
-        y,
-        direction,
-      }),
-    );
+    this.playerStore.updatePlayerPosition(currentUser.name, x, y, direction);
   }
 
   public addPlayer(newPlayer: Player) {
-    this.store.dispatch(PlayerActions.addPlayer({ player: newPlayer }));
+    this.playerStore.addPlayer(newPlayer);
   }
 
   public removePlayer(name: string) {
-    this.store.dispatch(PlayerActions.removePlayer({ name }));
+    this.playerStore.removePlayer(name);
   }
 
   public updatePlayerPosition(name: string, x: number, y: number) {
-    this.store.dispatch(PlayerActions.updatePlayerPosition({ name, x, y }));
+    this.playerStore.updatePlayerPosition(name, x, y);
   }
 }
