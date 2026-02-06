@@ -11,27 +11,30 @@ export class SignalrService {
     this.hubConnection = new signalR.HubConnectionBuilder()
       .withUrl('http://localhost:5000/gameHub')
       .withAutomaticReconnect()
+      .configureLogging(signalR.LogLevel.Information)
       .build();
 
     this.startConnection();
   }
 
+  private connectionPromise: Promise<void> | null = null;
+
   public startConnection = () => {
     if (this.hubConnection.state === signalR.HubConnectionState.Disconnected) {
-      this.hubConnection
+      this.connectionPromise = this.hubConnection
         .start()
-        .then(() => console.log('SignalR Connection started'))
-        .catch((err) =>
-          console.log('Error establishing SignalR connection: ' + err),
-        );
+        .catch((err) => {
+          console.error('Error establishing SignalR connection: ' + err);
+          throw err;
+        });
     }
+    return this.connectionPromise || Promise.resolve();
   };
 
   public addMessageListener = (
     callback: (user: string, message: string) => void,
   ) => {
     this.hubConnection.on('ReceiveMessage', (user: string, message: string) => {
-      console.log(`User: ${user}, Message: ${message}`);
       callback(user, message);
     });
   };
@@ -49,10 +52,13 @@ export class SignalrService {
   };
 
   public on(methodName: string, newMethod: (...args: any[]) => void) {
-    this.hubConnection.on(methodName, newMethod);
+    this.hubConnection.on(methodName, (...args) => {
+      newMethod(...args);
+    });
   }
 
-  public invoke(methodName: string, ...args: any[]) {
+  public async invoke(methodName: string, ...args: any[]) {
+    await this.startConnection();
     return this.hubConnection.invoke(methodName, ...args);
   }
 }
