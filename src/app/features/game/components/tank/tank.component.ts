@@ -1,17 +1,15 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TankService } from '../services/tan.service';
-
+import { TankService } from '../../services/tank.service';
 
 @Component({
   selector: 'app-tank',
   standalone: true,
   imports: [CommonModule],
   templateUrl: './tank.component.html',
-  styleUrl: './tank.component.scss'
+  styleUrl: './tank.component.scss',
 })
 export class TankComponent implements OnInit {
-
   position = { x: 100, y: 100 };
   playerId = 'Jugador-1';
 
@@ -19,10 +17,7 @@ export class TankComponent implements OnInit {
 
   ngOnInit(): void {
     this.tankService.onMovementReceived((data) => {
-      console.log(
-        `Movimiento recibido de ${data.playerId}:`,
-        data.direction
-      );
+      console.log(`Movimiento recibido de ${data.playerId}:`, data.direction);
     });
   }
 
@@ -65,7 +60,7 @@ export class TankComponent implements OnInit {
     this.tankService.sendMovement({
       playerId: this.playerId,
       direction,
-      position: { ...this.position }
+      position: { ...this.position },
     });
   }
 }

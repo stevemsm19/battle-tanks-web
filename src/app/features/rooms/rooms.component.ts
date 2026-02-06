@@ -40,7 +40,7 @@ export class RoomsComponent implements OnInit {
   joinRoom(roomId: string): void {
     this.roomService.joinRoom(roomId).subscribe({
       next: () => {
-        this.router.navigate(['/waiting-room']);
+        this.router.navigate(['/waiting-room', roomId]);
       },
       error: (error) => {
         console.error('Error joining room:', error);
@@ -66,9 +66,11 @@ export class RoomsComponent implements OnInit {
   createRoom() {
     console.log('Creating room:', this.newRoom);
     this.roomService.createRoom(this.newRoom.name).subscribe({
-      next: () => {
+      next: (room) => {
         this.closeModal();
-        this.router.navigate(['/waiting-room']);
+        if (room && room.id) {
+          this.router.navigate(['/waiting-room', room.id]);
+        }
       },
       error: (error) => {
         console.error('Error creating room:', error);
