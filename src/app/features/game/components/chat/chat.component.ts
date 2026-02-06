@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { GameService } from '../services/game.service';
+import { WaitingRoomService } from '../../../../features/waiting-room/services/waiting-room.service';
 
 @Component({
   selector: 'app-chat',
@@ -11,19 +11,18 @@ import { GameService } from '../services/game.service';
   styleUrl: './chat.component.scss',
 })
 export class ChatComponent {
-  private gameService = inject(GameService);
+  private waitingRoomService = inject(WaitingRoomService);
 
   get messages() {
-    return this.gameService.messages();
+    return this.waitingRoomService.messages();
   }
 
   newMessage = '';
 
-  currentUserId = this.gameService.currentUserId;
+  currentUserId = this.waitingRoomService.currentUserId;
 
   sendMessage() {
     if (this.newMessage.trim()) {
-      this.gameService.sendMessage(this.newMessage);
       this.newMessage = '';
     }
   }

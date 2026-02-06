@@ -1,16 +1,14 @@
-import { Store } from '@ngrx/store';
-import { Player } from '../../models/player.model';
-import * as PlayerActions from '../../store/actions/player.actions';
-import { ChatMessage } from '../../services/game.service';
+import { Player } from '../models/player.model';
+import { ChatMessage } from '../../features/waiting-room/services/waiting-room.service';
 
 export const simulateIncomingPlayers = (
-  store: Store,
   mockPlayers: Player[],
+  callback: (player: Player) => void,
 ) => {
   let index = 0;
   const interval = setInterval(() => {
     if (index < mockPlayers.length) {
-      store.dispatch(PlayerActions.addPlayer({ player: mockPlayers[index] }));
+      callback(mockPlayers[index]);
       index++;
     } else {
       clearInterval(interval);

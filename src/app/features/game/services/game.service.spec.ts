@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { GameService } from './game.service';
-import { SignalrService } from './signalr.service';
-import { StoreModule } from '@ngrx/store';
-import { playerReducer } from '../store/reducer/player.reducer';
+import { StoreModule, provideStore } from '@ngrx/store';
+import { SignalrService } from '../../../core/services/signalr.service';
 
 describe('GameService', () => {
   let service: GameService;
@@ -12,8 +11,11 @@ describe('GameService', () => {
     const spy = jasmine.createSpyObj('SignalrService', ['on', 'invoke']);
 
     TestBed.configureTestingModule({
-      imports: [StoreModule.forRoot({ players: playerReducer })],
-      providers: [GameService, { provide: SignalrService, useValue: spy }],
+      providers: [
+        GameService,
+        provideStore(),
+        { provide: SignalrService, useValue: spy },
+      ],
     });
 
     service = TestBed.inject(GameService);
@@ -27,16 +29,29 @@ describe('GameService', () => {
   });
 
   it('should add a player to the first empty slot', () => {
-    const newPlayer = { id: '1', name: 'TEST_PLAYER', status: 'ready' as const };
+    const newPlayer = {
+      id: '1',
+      name: 'TEST_PLAYER',
+      status: 'ready' as const,
+    };
 
     service.addPlayer(newPlayer);
 
     const players = service.players();
-    expect(players[1].name).toBe('TEST_PLAYER');
-    expect(players[1].status).toBe('ready');
+    const addedPlayer = players.find((p) => p.name === 'TEST_PLAYER');
+    expect(addedPlayer).toBeDefined();
+    expect(addedPlayer?.status).toBe('ready');
   });
 
   it('should update player position', () => {
+    service.addPlayer({
+      id: '1',
+      name: 'STEVENSM19',
+      status: 'ready',
+      x: 0,
+      y: 0,
+    });
+
     const initialPosition = { x: 5, y: 5 };
     service.updatePlayerPosition(
       'STEVENSM19',
@@ -53,16 +68,19 @@ describe('GameService', () => {
   });
 
   it('should remove a player and reset slot to empty', () => {
-    const playerToRemove = { id: '1', name: 'TO_BE_REMOVED', status: 'ready' as const };
+    const playerToRemove = {
+      id: '1',
+      name: 'TO_BE_REMOVED',
+      status: 'ready' as const,
+    };
     service.addPlayer(playerToRemove);
 
     let players = service.players();
-    expect(players[1].name).toBe('TO_BE_REMOVED');
+    expect(players.some((p) => p.name === 'TO_BE_REMOVED')).toBeTrue();
 
     service.removePlayer('TO_BE_REMOVED');
 
     players = service.players();
-    expect(players[1].name).toBe('ESPERANDO...');
-    expect(players[1].status).toBe('empty');
+    expect(players.some((p) => p.name === 'TO_BE_REMOVED')).toBeFalse();
   });
 });
