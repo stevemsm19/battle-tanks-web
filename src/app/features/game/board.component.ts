@@ -5,8 +5,8 @@ import {
   HostListener,
   signal,
 } from '@angular/core';
-import { GameService } from '../../services/game.service';
-import { ChatComponent } from '../chat/chat.component';
+import { GameService } from './services/game.service';
+import { ChatComponent } from './components/chat/chat.component';
 import { LowerCasePipe } from '@angular/common';
 
 @Component({
@@ -18,7 +18,7 @@ import { LowerCasePipe } from '@angular/common';
 })
 export class BoardComponent {
   private gameService = inject(GameService);
-  mapName = this.gameService.mapName;
+  mapName = 'Default Map';
   currentUser = this.gameService.currentUser;
 
   mapMatrix = this.gameService.mapMatrix;
