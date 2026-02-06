@@ -1,10 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ChatComponent } from '../game/components/chat/chat.component';
-import { GameService } from '../game/services/game.service';
+import { WaitingRoomService } from './services/waiting-room.service';
 
 @Component({
   selector: 'app-waiting-room',
@@ -13,20 +13,29 @@ import { GameService } from '../game/services/game.service';
   templateUrl: './waiting-room.component.html',
   styleUrl: './waiting-room.component.scss',
 })
-export class WaitingRoomComponent {
-  private gameService = inject(GameService);
+export class WaitingRoomComponent implements OnInit {
+  private waitingRoomService = inject(WaitingRoomService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
-  roomName = this.gameService.roomName;
-  mapName = this.gameService.mapName;
-  roomId = this.gameService.roomId;
+  roomName = this.waitingRoomService.roomName;
+  mapName = this.waitingRoomService.mapName;
+  roomId = this.waitingRoomService.roomId;
 
   get players() {
-    return this.gameService.players();
+    return this.waitingRoomService.players();
+  }
+
+  ngOnInit() {
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      if (id) {
+        this.waitingRoomService.loadRoomDetails(id);
+      }
+    });
   }
 
   startGame() {
-    this.gameService.assignPositions();
     this.router.navigate(['/game']);
   }
 }
