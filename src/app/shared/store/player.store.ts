@@ -5,7 +5,7 @@ import {
   withMethods,
   withState,
 } from '@ngrx/signals';
-import { Player } from '../../../shared/models/player.model';
+import { Player } from '../models/player.model';
 import { computed } from '@angular/core';
 
 type PlayerState = {

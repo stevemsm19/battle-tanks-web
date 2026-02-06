@@ -5,7 +5,7 @@ import { RegisterComponent } from './core/auth/pages/register/register.component
 import { RoomsComponent } from './features/rooms/rooms.component';
 import { authGuard, publicGuard } from './core/guards/auth.guard';
 import { WaitingRoomComponent } from './features/waiting-room/waiting-room.component';
-import { BoardComponent } from './features/game/components/board/board.component';
+import { BoardComponent } from './features/game/board.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -17,7 +17,7 @@ export const routes: Routes = [
   },
   { path: 'rooms', component: RoomsComponent, canActivate: [authGuard] },
   {
-    path: 'waiting-room',
+    path: 'waiting-room/:id',
     component: WaitingRoomComponent,
     canActivate: [authGuard],
   },
