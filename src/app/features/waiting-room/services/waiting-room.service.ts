@@ -1,8 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { SignalrService } from '../../../core/services/signalr.service';
-import { PlayerStore } from '../../game/store/player.store';
 import { Player } from '../../../shared/models/player.model';
 import { RoomService } from '../../rooms/services/room.service';
+import { PlayerStore } from '../../../shared/store/player.store';
 
 export interface ChatMessage {
   senderId: string;
@@ -67,7 +67,7 @@ export class WaitingRoomService {
 
   private addListeners() {
     this.signalrService.on('PlayerJoined', (player: Player) => {
-      console.log('Player joined: ' + player.name);
+      console.log('SignalR [PlayerJoined] Received:', player);
       this.playerStore.addPlayer(player);
     });
 

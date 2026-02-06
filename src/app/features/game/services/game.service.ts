@@ -1,25 +1,14 @@
 import { Injectable, signal, inject, WritableSignal } from '@angular/core';
 
 import { Player } from '../../../shared/models/player.model';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   calculateNewPosition,
   generateRandomPositions,
   MAP_MATRIX,
 } from '../../../shared/utils/game-logic.utils';
-import {
-  simulateIncomingPlayers,
-  simulateIncomingMessages,
-} from '../../../shared/utils/simulation.utils';
 import { SignalrService } from '../../../core/services/signalr.service';
-import { PlayerStore } from '../store/player.store';
+import { PlayerStore } from '../../../shared/store/player.store';
 
-export interface ChatMessage {
-  senderId: string;
-  sender: string;
-  text: string;
-  time: string;
-}
 
 export interface Bullet {
   id: string;
@@ -36,84 +25,28 @@ export class GameService {
   private signalrService = inject(SignalrService);
   private playerStore = inject(PlayerStore);
 
-  readonly _currentUserId = '1';
-  private _roomName = 'TEST';
-  private _mapName = 'TESTMAP';
-  private _roomId = '123';
-
-  public get currentUserId() {
-    return this._currentUserId;
-  }
-
-  public get roomName() {
-    return this._roomName;
-  }
-
-  public get mapName() {
-    return this._mapName;
-  }
-
-  public get roomId() {
-    return this._roomId;
-  }
-
   readonly players = this.playerStore.players;
   readonly currentUser = this.playerStore.currentUser;
+
+  public async joinGame(roomId: string) {
+    await this.signalrService.joinGame(roomId);
+  }
+
+  public async leaveGame(roomId: string) {
+    await this.signalrService.leaveGame(roomId);
+  }
 
   public mapMatrix: WritableSignal<number[][]> = signal(
     JSON.parse(JSON.stringify(MAP_MATRIX)),
   );
   public bullets = signal<Bullet[]>([]);
 
-  public messages = signal<ChatMessage[]>([]);
   public score = signal(0);
-
   private lastShotTime = 0;
   private readonly SHOOT_COOLDOWN = 500;
 
   constructor() {
-    this.addListeners();
-
-    //TODO: Remove when backend is ready
-    this.startSimulations();
     this.startGameLoop();
-  }
-
-  private addListeners() {
-    this.signalrService.on('PlayerJoined', (player: Player) => {
-      console.log('Player joined: ' + player.name);
-      this.playerStore.addPlayer(player);
-    });
-
-    this.signalrService.on('UpdatePlayerList', (players: Player[]) => {
-      console.log('UpdatePlayerList received');
-      this.playerStore.setPlayers(players);
-    });
-
-    this.signalrService.on('ReceiveMessage', (message: ChatMessage) => {
-      console.log('ReceiveMessage received');
-      this.addMessage(message);
-    });
-  }
-
-  private startSimulations() {
-    let mockPlayers: Player[] = [
-      { id: '1', name: 'STEVENSM19', status: 'ready', x: 0, y: 0 },
-      { id: '2', name: 'PIPE123', status: 'ready', x: 0, y: 0 },
-      { id: '3', name: 'TU_MOM12', status: 'ready', x: 0, y: 0 },
-    ];
-
-    mockPlayers = generateRandomPositions(mockPlayers);
-
-    // Simulate direct store update as simulation utils previously dispatched actions
-    this.playerStore.setPlayers(mockPlayers);
-
-    const mockMessages: ChatMessage[] = [
-      { senderId: '1', sender: 'STEVENSM19', text: 'LISTOS?', time: '13:02' },
-      { senderId: '2', sender: 'PIPE123', text: 'YA TU SABE', time: '13:03' },
-      { senderId: '3', sender: 'TU_MOM12', text: 'FALTA UNO', time: '13:05' },
-    ];
-    simulateIncomingMessages(mockMessages, (msg) => this.addMessage(msg));
   }
 
   private startGameLoop() {
@@ -124,6 +57,7 @@ export class GameService {
 
   private updateBullets() {
     this.bullets.update((currentBullets) => {
+      // ... same logic
       const remainingBullets: Bullet[] = [];
       const BULLET_SIZE = 0.4;
 
@@ -150,6 +84,7 @@ export class GameService {
         if (nextX < 1 || nextX > 24 || nextY < 1 || nextY > 16) {
           continue;
         }
+
         const startCol = Math.floor(nextX - 1);
         const endCol = Math.floor(nextX - 1 + BULLET_SIZE);
         const startRow = Math.floor(nextY - 1);
@@ -157,27 +92,29 @@ export class GameService {
 
         let hit = false;
 
-        collisionLoop: for (let r = startRow; r <= endRow; r++) {
-          for (let c = startCol; c <= endCol; c++) {
-            if (r >= 0 && r < 16 && c >= 0 && c < 24) {
-              const cell = this.mapMatrix()[r][c];
-              if (cell === 1) {
-                hit = true;
-                break collisionLoop;
-              } else if (cell === 2) {
-                hit = true;
-                this.destroyWall(r, c);
-                break collisionLoop;
+        if (nextX >= 1 && nextX <= 24 && nextY >= 1 && nextY <= 16) {
+          collisionLoop: for (let r = startRow; r <= endRow; r++) {
+            for (let c = startCol; c <= endCol; c++) {
+              if (r >= 0 && r < 16 && c >= 0 && c < 24) {
+                const cell = this.mapMatrix()[r][c];
+                if (cell === 1) {
+                  hit = true;
+                  break collisionLoop;
+                } else if (cell === 2) {
+                  hit = true;
+                  this.destroyWall(r, c);
+                  break collisionLoop;
+                }
               }
             }
           }
+        } else {
+          continue;
         }
 
         if (hit) continue;
-
         remainingBullets.push({ ...bullet, x: nextX, y: nextY });
       }
-
       return remainingBullets;
     });
   }
@@ -189,28 +126,7 @@ export class GameService {
       newMatrix[row][col] = 0;
       return newMatrix;
     });
-
     this.score.update((s) => s + 10);
-  }
-
-  private addMessage(message: ChatMessage) {
-    this.messages.update((msgs) => [...msgs, message]);
-  }
-
-  public sendMessage(text: string) {
-    this.signalrService.invoke('SendMessage', text);
-
-    const newMessage: ChatMessage = {
-      senderId: '1',
-      sender: 'STEVENSM19',
-      text: text,
-      time: new Date().toLocaleTimeString('es-ES', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      }),
-    };
-    this.addMessage(newMessage);
   }
 
   public assignPositions() {
