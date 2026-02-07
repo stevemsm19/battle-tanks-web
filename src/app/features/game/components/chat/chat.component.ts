@@ -23,6 +23,7 @@ export class ChatComponent {
 
   sendMessage() {
     if (this.newMessage.trim()) {
+      this.waitingRoomService.sendMessage(this.newMessage);
       this.newMessage = '';
     }
   }

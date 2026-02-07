@@ -4,7 +4,7 @@
 </div>
 
 <div class="chat-history">
-  @for (msg of messages; track msg.time) {
+  @for (msg of messages; track $index) {
     <div
       class="chat-message"
       [class.mine]="msg.senderId === currentUserId"
