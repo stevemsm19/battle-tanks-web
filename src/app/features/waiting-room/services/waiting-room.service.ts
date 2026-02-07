@@ -73,12 +73,12 @@ export class WaitingRoomService {
   public sendMessage(message: string) {
     const userId = this.currentUserId;
     const players = this.players();
-  
+
     let user = players.find((p) => p.id === userId);
 
     if (!user && this.firebaseUser()) {
       const fbName = this.firebaseUser()?.displayName;
-      const fbEmail = this.firebaseUser()?.email?.split('@')[0]; 
+      const fbEmail = this.firebaseUser()?.email?.split('@')[0];
 
       if (fbName) {
         user = players.find(
@@ -98,9 +98,15 @@ export class WaitingRoomService {
         this.firebaseUser()?.email ||
         'Unknown User';
 
-
+    const startTime = performance.now();
     this.signalrService
       .invoke('SendMessage', this.roomId(), senderName, message)
+      .then(() => {
+        const latency = performance.now() - startTime;
+        console.log(
+          `[WaitingRoomService] Message sent to SignalR in ${latency.toFixed(2)} ms`,
+        );
+      })
       .catch((err) =>
         console.error(
           '[WaitingRoomService] Error sending message to SignalR:',
