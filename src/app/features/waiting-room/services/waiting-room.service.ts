@@ -3,6 +3,9 @@ import { SignalrService } from '../../../core/services/signalr.service';
 import { Player } from '../../../shared/models/player.model';
 import { RoomService } from '../../rooms/services/room.service';
 import { PlayerStore } from '../../../shared/store/player.store';
+import { ChatStore } from '../../game/store/chat.store';
+import { AuthService } from '../../../core/services/auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 export interface ChatMessage {
   senderId: string;
@@ -18,19 +21,21 @@ export class WaitingRoomService {
   private signalrService = inject(SignalrService);
   private playerStore = inject(PlayerStore);
   private roomService = inject(RoomService);
+  private chatStore = inject(ChatStore);
 
-  readonly _currentUserId = '1';
+  private authService = inject(AuthService);
+  private firebaseUser = toSignal(this.authService.user$);
 
   public roomName = signal('Loading...');
   public mapName = signal('Default Map');
   public roomId = signal('');
 
-  public messages = signal<ChatMessage[]>([]);
+  public messages = this.chatStore.messages;
 
   readonly players = this.playerStore.players;
 
   public get currentUserId() {
-    return this._currentUserId;
+    return this.firebaseUser()?.uid || '';
   }
 
   constructor() {
@@ -65,6 +70,45 @@ export class WaitingRoomService {
     });
   }
 
+  public sendMessage(message: string) {
+    const userId = this.currentUserId;
+    const players = this.players();
+  
+    let user = players.find((p) => p.id === userId);
+
+    if (!user && this.firebaseUser()) {
+      const fbName = this.firebaseUser()?.displayName;
+      const fbEmail = this.firebaseUser()?.email?.split('@')[0]; 
+
+      if (fbName) {
+        user = players.find(
+          (p) => p.name.toLowerCase() === fbName.toLowerCase(),
+        );
+      }
+      if (!user && fbEmail) {
+        user = players.find(
+          (p) => p.name.toLowerCase() === fbEmail.toLowerCase(),
+        );
+      }
+    }
+
+    const senderName = user
+      ? user.name
+      : this.firebaseUser()?.displayName ||
+        this.firebaseUser()?.email ||
+        'Unknown User';
+
+
+    this.signalrService
+      .invoke('SendMessage', this.roomId(), senderName, message)
+      .catch((err) =>
+        console.error(
+          '[WaitingRoomService] Error sending message to SignalR:',
+          err,
+        ),
+      );
+  }
+
   private addListeners() {
     this.signalrService.on('PlayerJoined', (player: Player) => {
       console.log('SignalR [PlayerJoined] Received:', player);
@@ -76,13 +120,17 @@ export class WaitingRoomService {
       this.playerStore.setPlayers(players);
     });
 
-    this.signalrService.on('ReceiveMessage', (message: ChatMessage) => {
-      console.log('ReceiveMessage received');
-      this.addMessage(message);
+    this.signalrService.on('ReceiveMessage', (data: any) => {
+      console.log('ReceiveMessage received', data);
+      const message: ChatMessage = {
+        senderId: 'unknown',
+        sender: data.sender || 'Unknown',
+        text: data.text || '',
+        time: data.time
+          ? new Date(data.time).toLocaleTimeString()
+          : new Date().toLocaleTimeString(),
+      };
+      this.chatStore.addMessage(message);
     });
-  }
-
-  private addMessage(message: ChatMessage) {
-    this.messages.update((msgs) => [...msgs, message]);
   }
 }
