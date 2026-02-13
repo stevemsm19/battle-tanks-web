@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { WaitingRoomService } from './waiting-room.service';
 import { SignalrService } from '../../../core/services/signalr.service';
-import { RoomService } from '../../rooms/services/room.service';
+import { RoomService } from '../../search-room/services/search-room.service';
 import { PlayerStore } from '../../../shared/store/player.store';
 import { of } from 'rxjs';
 import { Player } from '../../../shared/models/player.model';

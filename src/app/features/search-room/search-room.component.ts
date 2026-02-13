@@ -2,17 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { RoomService } from './services/room.service';
+import { RoomService } from './services/search-room.service';
 import { Room } from '../../shared/models/room.model';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-rooms',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './rooms.component.html',
-  styleUrl: './rooms.component.scss',
+  imports: [CommonModule, FormsModule, ButtonComponent],
+  templateUrl: './search-room.component.html',
+  styleUrl: './search-room.component.scss',
 })
-export class RoomsComponent implements OnInit {
+export class SearchRoomComponent implements OnInit {
   rooms: Room[] = [];
 
   constructor(
@@ -76,5 +77,9 @@ export class RoomsComponent implements OnInit {
         console.error('Error creating room:', error);
       },
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/play']);
   }
 }

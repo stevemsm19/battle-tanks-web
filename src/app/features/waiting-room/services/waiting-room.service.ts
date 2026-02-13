@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { SignalrService } from '../../../core/services/signalr.service';
 import { Player } from '../../../shared/models/player.model';
-import { RoomService } from '../../rooms/services/room.service';
+import { RoomService } from '../../search-room/services/search-room.service';
 import { PlayerStore } from '../../../shared/store/player.store';
 import { ChatStore } from '../../game/store/chat.store';
 import { LoginService } from '../../../core/auth/pages/login/services/login.service';
