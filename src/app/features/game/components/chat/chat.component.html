@@ -1,6 +1,6 @@
 <div class="chat-header">
-  <h2 class="section-title"><i class="icon-chat"></i> CHAT DE SALA</h2>
-  <span class="channel-info">CANAL: GLOBAL</span>
+  <h2 class="section-title"><i class="icon-chat"></i> ROOM CHAT</h2>
+  <span class="channel-info">CHANNEL: GLOBAL</span>
 </div>
 
 <div class="chat-history">
@@ -26,7 +26,7 @@
     type="text"
     [(ngModel)]="newMessage"
     (keyup.enter)="sendMessage()"
-    placeholder="ESCRIBE MENSAJE..."
+    placeholder="TYPE MESSAGE..."
     class="chat-input"
   />
   <button (click)="sendMessage()" class="send-btn">></button>

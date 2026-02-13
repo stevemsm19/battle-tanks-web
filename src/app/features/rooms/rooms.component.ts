@@ -21,9 +21,9 @@ export class RoomsComponent implements OnInit {
   ) {}
 
   readonly statusMap: Record<string, string> = {
-    Open: 'Abierto',
-    Closed: 'Cerrado',
-    Cancelled: 'Cancelado',
+    Open: 'Open',
+    Closed: 'Closed',
+    Cancelled: 'Cancelled',
   };
 
   ngOnInit(): void {

@@ -1,0 +1,25 @@
+<div class="input-container">
+  @if (label) {
+    <label class="input-label">{{ label }}</label>
+  }
+
+  <input
+    [type]="type"
+    [placeholder]="placeholder"
+    [formControl]="control"
+    class="input-field"
+    [class.error]="hasError"
+  />
+
+  @if (hasError) {
+    <div class="error-message">
+      @if (control.errors) {
+        @for (error of control.errors | keyvalue; track error.key) {
+          <span>
+            {{ errorMessages[error.key] || "Invalid field" }}
+          </span>
+        }
+      }
+    </div>
+  }
+</div>

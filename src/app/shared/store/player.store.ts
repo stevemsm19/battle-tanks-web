@@ -48,7 +48,7 @@ export const PlayerStore = signalStore(
       patchState(store, (state) => ({
         players: state.players.map((p) =>
           p.name === name
-            ? { ...p, name: 'ESPERANDO...', status: 'empty' as const }
+            ? { ...p, name: 'WAITING...', status: 'empty' as const }
             : p,
         ),
       }));

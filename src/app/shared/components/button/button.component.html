@@ -1,0 +1,10 @@
+<button
+  [type]="type"
+  [disabled]="disabled"
+  [class]="'btn btn-' + variant"
+  [class.full-width]="fullWidth"
+  (click)="onClick()"
+>
+  {{ label }}
+  <ng-content></ng-content>
+</button>

@@ -11,7 +11,7 @@ import { TankService } from '../../services/tank.service';
 })
 export class TankComponent implements OnInit {
   position = { x: 100, y: 100 };
-  playerId = 'Jugador-1';
+  playerId = 'Player-1';
 
   constructor(private tankService: TankService) {}
 

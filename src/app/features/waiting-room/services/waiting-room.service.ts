@@ -4,7 +4,7 @@ import { Player } from '../../../shared/models/player.model';
 import { RoomService } from '../../rooms/services/room.service';
 import { PlayerStore } from '../../../shared/store/player.store';
 import { ChatStore } from '../../game/store/chat.store';
-import { AuthService } from '../../../core/services/auth.service';
+import { LoginService } from '../../../core/auth/pages/login/services/login.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 
 export interface ChatMessage {
@@ -23,8 +23,8 @@ export class WaitingRoomService {
   private roomService = inject(RoomService);
   private chatStore = inject(ChatStore);
 
-  private authService = inject(AuthService);
-  private firebaseUser = toSignal(this.authService.user$);
+  private loginService = inject(LoginService);
+  private firebaseUser = toSignal(this.loginService.user$);
 
   public roomName = signal('Loading...');
   public mapName = signal('Default Map');

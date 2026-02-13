@@ -1,44 +1,74 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../services/auth.service';
+import { LoginService } from './services/login.service';
+import { InputComponent } from '../../../../shared/components/input/input.component';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    InputComponent,
+    ButtonComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-  email = '';
-  password = '';
+  loginForm: FormGroup;
   errorMessage = '';
 
   constructor(
     private router: Router,
-    private authService: AuthService,
-  ) {}
+    private loginService: LoginService,
+    private fb: FormBuilder,
+  ) {
+    this.loginForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required, Validators.minLength(6)]],
+    });
+  }
+
+  get emailControl() {
+    return this.loginForm.get('email') as any;
+  }
+
+  get passwordControl() {
+    return this.loginForm.get('password') as any;
+  }
 
   login() {
-    this.errorMessage = '';
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
-    this.authService
-      .login(this.email, this.password)
+    this.errorMessage = '';
+    const { email, password } = this.loginForm.value;
+
+    this.loginService
+      .login(email, password)
       .then(() => {
         this.router.navigate(['/rooms']);
       })
       .catch((error: any) => {
-        console.error('Login error:', error);
         const errorCode = error.code;
         const errorMessage = error.message;
-        console.error('Login error:', errorCode, errorMessage);
 
         if (errorCode === 'auth/invalid-credential') {
-          this.errorMessage = 'Invalid email or password.';
+          this.errorMessage = 'Email or password invalid';
         } else {
-          this.errorMessage = `Login failed: ${errorMessage}`;
+          this.errorMessage = `Error in login: ${errorMessage}`;
         }
       });
   }

@@ -1,16 +1,16 @@
 <div class="waiting-room-container">
   <header class="room-header">
-    <h1 class="title">SALA DE ESPERA</h1>
+    <h1 class="title">WAITING ROOM</h1>
     <p class="subtitle">
       ID: {{ roomId() }}
       <br />
-      PARTIDA: {{ roomName() }} - {{ mapName() }}
+      MATCH: {{ roomName() }} - {{ mapName() }}
     </p>
   </header>
 
   <div class="main-content">
     <section class="players-section">
-      <h2 class="section-title"><i class="icon-users"></i> JUGADORES</h2>
+      <h2 class="section-title"><i class="icon-users"></i> PLAYERS</h2>
 
       <div class="players-list">
         @for (player of players; track $index) {
@@ -27,7 +27,7 @@
               <div class="name-container">
                 <span class="player-name">{{ player.name }}</span>
                 @if (player.status === "creator") {
-                  <span class="creator-badge">CREADOR</span>
+                  <span class="creator-badge">CREATOR</span>
                 }
               </div>
             </div>
@@ -43,7 +43,7 @@
         }
       </div>
 
-      <button class="invite-btn">INVITAR AMIGOS</button>
+      <button class="invite-btn">INVITE FRIENDS</button>
     </section>
 
     <section class="chat-section">
@@ -51,7 +51,7 @@
     </section>
   </div>
   <footer class="action-bar">
-    <button class="btn abandon-btn">ABANDONAR</button>
-    <button class="btn start-btn" (click)="startGame()">INICIAR PARTIDA</button>
+    <button class="btn abandon-btn">LEAVE</button>
+    <button class="btn start-btn" (click)="startGame()">START GAME</button>
   </footer>
 </div>

@@ -1,7 +1,7 @@
 <div class="board-container">
   <div class="board-header">
     <h1 class="title">BATTLE TANKS</h1>
-    <p class="subtitle">MAPA: {{ mapName }}</p>
+    <p class="subtitle">MAP: {{ mapName }}</p>
   </div>
 
   <div class="game-content">
@@ -50,15 +50,15 @@
 
     <div class="dashboard-panel">
       <div class="stats-container">
-        <div class="panel-header">ESTADO</div>
+        <div class="panel-header">STATUS</div>
 
         <div class="stat-group">
-          <label>JUGADOR</label>
+          <label>PLAYER</label>
           <div class="value">{{ currentUser()?.name }}</div>
         </div>
 
         <div class="stat-group">
-          <label>SALUD</label>
+          <label>HEALTH</label>
           <div class="bar-container">
             <div
               class="bar-fill"
@@ -71,19 +71,19 @@
 
         <div class="stat-group">
           <button (click)="takeDamage()" class="damage-simulation-btn">
-            DAÑO DE PRUEBA
+            TEST DAMAGE
           </button>
         </div>
 
         <div class="stat-group">
-          <label>PUNTAJE</label>
+          <label>SCORE</label>
           <div class="value highlight">
             {{ formattedScore() }}
           </div>
         </div>
 
         <div class="stat-group">
-          <label>MUNICIONES</label>
+          <label>AMMO</label>
           <div class="ammo-grid">
             @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
               <div class="shell"></div>
