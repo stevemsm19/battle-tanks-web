@@ -1,0 +1,40 @@
+<div class="page-container">
+  <header class="top-container">
+    <div class="top-bar-title">Play</div>
+  </header>
+
+  <div class="body-container">
+    <app-sidebar activeMenu="play"></app-sidebar>
+
+    <div class="content-panel">
+      <div class="row-full">
+        <div class="image-placeholder"></div>
+        <app-button
+          label="Search Room"
+          variant="secondary"
+          [fullWidth]="true"
+          (clicked)="navigate('/search-room')"
+        ></app-button>
+      </div>
+
+      <div class="row-split">
+        <div class="card">
+          <div class="image-placeholder"></div>
+          <app-button
+            label="Create Room"
+            variant="secondary"
+            [fullWidth]="true"
+          ></app-button>
+        </div>
+        <div class="card">
+          <div class="image-placeholder"></div>
+          <app-button
+            label="Enter by ID"
+            variant="secondary"
+            [fullWidth]="true"
+          ></app-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
