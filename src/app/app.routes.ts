@@ -6,6 +6,7 @@ import { RoomsComponent } from './features/rooms/rooms.component';
 import { authGuard, publicGuard } from './core/guards/auth.guard';
 import { WaitingRoomComponent } from './features/waiting-room/waiting-room.component';
 import { BoardComponent } from './features/game/board.component';
+import { MyAccountComponent } from './features/my-account/my-account.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -14,6 +15,11 @@ export const routes: Routes = [
     path: 'register',
     component: RegisterComponent,
     canActivate: [publicGuard],
+  },
+  {
+    path: 'my-account',
+    component: MyAccountComponent,
+    canActivate: [authGuard],
   },
   { path: 'rooms', component: RoomsComponent, canActivate: [authGuard] },
   {

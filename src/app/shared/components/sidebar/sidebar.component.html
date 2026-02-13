@@ -1,0 +1,23 @@
+<div class="sidebar">
+  <h1 class="game-title">Battle Tank</h1>
+
+  <div class="menu-buttons">
+    <button
+      class="menu-btn"
+      [class.active]="activeMenu === 'play'"
+      routerLink="/rooms"
+    >
+      Play
+    </button>
+    <button
+      class="menu-btn"
+      [class.active]="activeMenu === 'account'"
+      routerLink="/my-account"
+    >
+      My Account
+    </button>
+    <button class="menu-btn" [class.active]="activeMenu === 'controls'">
+      Controls
+    </button>
+  </div>
+</div>
