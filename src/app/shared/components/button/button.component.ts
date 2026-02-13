@@ -12,8 +12,9 @@ export class ButtonComponent {
   @Input() label: string = '';
   @Input() type: 'button' | 'submit' | 'reset' = 'button';
   @Input() disabled: boolean = false;
-  @Input() variant: 'primary' | 'secondary' | 'danger' = 'primary';
+  @Input() variant: 'primary' | 'secondary' | 'danger' | 'menu' = 'primary';
   @Input() fullWidth: boolean = false;
+  @Input() isActive: boolean = false;
 
   @Output() clicked = new EventEmitter<void>();
 

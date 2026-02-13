@@ -34,11 +34,18 @@
   }
 
   &-secondary {
-    background-color: #4b5563;
-    color: white;
+    background-color: #d4d4d4;
+    color: 111;
 
     &:hover {
       background-color: #374151;
+    }
+
+    &.active {
+      font-weight: 900;
+      background: #fff;
+      color: #000;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
   }
 

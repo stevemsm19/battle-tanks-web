@@ -30,11 +30,11 @@
   gap: 3rem;
   margin: 2rem 4rem;
   overflow: hidden;
-  align-items: flex-start;
 }
 
 .content-panel {
   flex: 1;
+  align-self: flex-start;
   background: #333;
   border-radius: 12px;
   border: 1px dashed #999;

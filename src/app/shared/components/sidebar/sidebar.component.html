@@ -1,23 +1,35 @@
 <div class="sidebar">
-  <h1 class="game-title">Battle Tank</h1>
+  <div class="sidebar-top">
+    <h1 class="game-title">Battle Tank</h1>
 
-  <div class="menu-buttons">
-    <button
-      class="menu-btn"
-      [class.active]="activeMenu === 'play'"
-      routerLink="/rooms"
-    >
-      Play
-    </button>
-    <button
-      class="menu-btn"
-      [class.active]="activeMenu === 'account'"
-      routerLink="/my-account"
-    >
-      My Account
-    </button>
-    <button class="menu-btn" [class.active]="activeMenu === 'controls'">
-      Controls
-    </button>
+    <div class="menu-buttons">
+      <app-button
+        label="Play"
+        variant="secondary"
+        [fullWidth]="true"
+        [isActive]="activeMenu === 'play'"
+        (clicked)="navigate('/rooms')"
+      ></app-button>
+      <app-button
+        label="My Account"
+        variant="secondary"
+        [fullWidth]="true"
+        [isActive]="activeMenu === 'account'"
+        (clicked)="navigate('/my-account')"
+      ></app-button>
+      <app-button
+        label="Controls"
+        variant="secondary"
+        [fullWidth]="true"
+        [isActive]="activeMenu === 'controls'"
+      ></app-button>
+    </div>
   </div>
+
+  <app-button
+    label="Log Out"
+    variant="secondary"
+    [fullWidth]="true"
+    (clicked)="logout()"
+  ></app-button>
 </div>
