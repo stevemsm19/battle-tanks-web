@@ -23,7 +23,11 @@ export const routes: Routes = [
     component: MyAccountComponent,
     canActivate: [authGuard],
   },
-  { path: 'search-room', component: SearchRoomComponent, canActivate: [authGuard] },
+  {
+    path: 'search-room',
+    component: SearchRoomComponent,
+    canActivate: [authGuard],
+  },
   {
     path: 'play',
     component: PlayComponent,
@@ -40,4 +44,5 @@ export const routes: Routes = [
     component: ControlsComponent,
     canActivate: [authGuard],
   },
+  { path: '**', redirectTo: 'play' },
 ];

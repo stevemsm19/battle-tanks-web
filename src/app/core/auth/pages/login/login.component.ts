@@ -59,7 +59,7 @@ export class LoginComponent {
     this.loginService
       .login(email, password)
       .then(() => {
-        this.router.navigate(['/my-account']);
+        this.router.navigate(['/play']);
       })
       .catch((error: any) => {
         const errorCode = error.code;
