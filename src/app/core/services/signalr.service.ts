@@ -21,12 +21,10 @@ export class SignalrService {
 
   public startConnection = () => {
     if (this.hubConnection.state === signalR.HubConnectionState.Disconnected) {
-      this.connectionPromise = this.hubConnection
-        .start()
-        .catch((err) => {
-          console.error('Error establishing SignalR connection: ' + err);
-          throw err;
-        });
+      this.connectionPromise = this.hubConnection.start().catch((err) => {
+        console.error('Error establishing SignalR connection: ' + err);
+        throw err;
+      });
     }
     return this.connectionPromise || Promise.resolve();
   };
@@ -50,6 +48,22 @@ export class SignalrService {
       .invoke('LeaveGame', roomId)
       .catch((err) => console.error('Error leaving game: ' + err));
   };
+
+  public joinSearchRoom = () => {
+    return this.hubConnection
+      .invoke('JoinSearchRoomGroup')
+      .catch((err) => console.error('Error joining SearchRoom group: ' + err));
+  };
+
+  public leaveSearchRoom = () => {
+    return this.hubConnection
+      .invoke('LeaveSearchRoomGroup')
+      .catch((err) => console.error('Error leaving SearchRoom group: ' + err));
+  };
+
+  public off(methodName: string) {
+    this.hubConnection.off(methodName);
+  }
 
   public on(methodName: string, newMethod: (...args: any[]) => void) {
     this.hubConnection.on(methodName, (...args) => {

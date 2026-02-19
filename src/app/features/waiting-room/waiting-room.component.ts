@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { ActivatedRoute, Router } from '@angular/router';
-import { ChatComponent } from '../game/components/chat/chat.component';
+
 import { WaitingRoomService } from './services/waiting-room.service';
+import { ChatComponent } from '../../shared/components/chat/chat.component';
 
 @Component({
   selector: 'app-waiting-room',

@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { RoomService } from './services/search-room.service';
 import { Room } from '../../shared/models/room.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { SignalrService } from '../../core/services/signalr.service';
 
 @Component({
   selector: 'app-rooms',
@@ -13,12 +14,13 @@ import { ButtonComponent } from '../../shared/components/button/button.component
   templateUrl: './search-room.component.html',
   styleUrl: './search-room.component.scss',
 })
-export class SearchRoomComponent implements OnInit {
+export class SearchRoomComponent implements OnInit, OnDestroy {
   rooms: Room[] = [];
 
   constructor(
     private roomService: RoomService,
     private router: Router,
+    private signalrService: SignalrService,
   ) {}
 
   readonly statusMap: Record<string, string> = {
@@ -36,6 +38,18 @@ export class SearchRoomComponent implements OnInit {
         console.error('Error fetching rooms:', error);
       },
     });
+
+    this.signalrService.startConnection().then(() => {
+      this.signalrService.joinSearchRoom();
+      this.signalrService.on('RoomCreated', (room: Room) => {
+        this.rooms.push(room);
+      });
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.signalrService.leaveSearchRoom();
+    this.signalrService.off('RoomCreated');
   }
 
   joinRoom(roomId: string): void {

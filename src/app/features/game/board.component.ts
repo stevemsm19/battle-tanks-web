@@ -6,8 +6,9 @@ import {
   signal,
 } from '@angular/core';
 import { GameService } from './services/game.service';
-import { ChatComponent } from './components/chat/chat.component';
+
 import { LowerCasePipe } from '@angular/common';
+import { ChatComponent } from '../../shared/components/chat/chat.component';
 
 @Component({
   selector: 'app-board',

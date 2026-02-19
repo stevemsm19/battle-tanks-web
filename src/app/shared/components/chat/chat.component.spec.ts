@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideStore } from '@ngrx/store';
 
 import { ChatComponent } from './chat.component';
-import { WaitingRoomService } from '../../../waiting-room/services/waiting-room.service';
+import { WaitingRoomService } from '../../../features/waiting-room/services/waiting-room.service';
 
 describe('ChatComponent', () => {
   let component: ChatComponent;
