@@ -7,49 +7,59 @@
     <app-sidebar activeMenu="account"></app-sidebar>
 
     <div class="content-panel">
-      <div class="panel-body">
-        <div class="image-container">
-          <div class="avatar-placeholder"></div>
+      @if (isLoading) {
+        <div class="spinner-container">
+          <app-spinner
+            size="large"
+            color="primary"
+            message="Loading profile..."
+          ></app-spinner>
         </div>
+      } @else {
+        <div class="panel-body">
+          <div class="image-container">
+            <div class="avatar-placeholder"></div>
+          </div>
 
-        <div class="form-container">
-          <app-input
-            label="Nickname"
-            type="text"
-            placeholder="Enter your nickname"
-            [control]="nicknameControl"
-            [errorMessages]="{ required: 'Nickname is required' }"
-          ></app-input>
-          <app-input
-            label="Email"
-            type="email"
-            placeholder="Enter your email"
-            [control]="emailControl"
-            [errorMessages]="{
-              required: 'Email is required',
-              email: 'Invalid email format',
-            }"
-          ></app-input>
-          <div class="profile-actions">
-            <app-button
-              [label]="isEditing ? 'Cancel' : 'Edit Profile'"
-              variant="secondary"
-              (clicked)="toggleEdit()"
-            ></app-button>
-            <app-button
-              label="Save Profile"
-              variant="primary"
-              [disabled]="!isEditing"
-              (clicked)="saveProfile()"
-            ></app-button>
-            <app-button
-              label="Delete Account"
-              variant="danger"
-              (clicked)="deleteAccount()"
-            ></app-button>
+          <div class="form-container">
+            <app-input
+              label="Nickname"
+              type="text"
+              placeholder="Enter your nickname"
+              [control]="nicknameControl"
+              [errorMessages]="{ required: 'Nickname is required' }"
+            ></app-input>
+            <app-input
+              label="Email"
+              type="email"
+              placeholder="Enter your email"
+              [control]="emailControl"
+              [errorMessages]="{
+                required: 'Email is required',
+                email: 'Invalid email format',
+              }"
+            ></app-input>
+            <div class="profile-actions">
+              <app-button
+                [label]="isEditing ? 'Cancel' : 'Edit Profile'"
+                variant="secondary"
+                (clicked)="toggleEdit()"
+              ></app-button>
+              <app-button
+                label="Save Profile"
+                variant="primary"
+                [disabled]="!isEditing"
+                (clicked)="saveProfile()"
+              ></app-button>
+              <app-button
+                label="Delete Account"
+                variant="danger"
+                (clicked)="deleteAccount()"
+              ></app-button>
+            </div>
           </div>
         </div>
-      </div>
+      }
     </div>
   </div>
 </div>

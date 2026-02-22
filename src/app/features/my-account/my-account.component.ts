@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 import { InputComponent } from '../../shared/components/input/input.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { UserService } from './services/user.service';
 import { LoginService } from '../../core/auth/pages/login/services/login.service';
 
@@ -15,6 +16,7 @@ import { LoginService } from '../../core/auth/pages/login/services/login.service
     SidebarComponent,
     InputComponent,
     ButtonComponent,
+    SpinnerComponent,
   ],
   templateUrl: './my-account.component.html',
   styleUrl: './my-account.component.scss',
@@ -28,6 +30,7 @@ export class MyAccountComponent implements OnInit {
     Validators.email,
   ]);
   isEditing = false;
+  isLoading = true;
 
   constructor(
     private userService: UserService,
@@ -40,9 +43,11 @@ export class MyAccountComponent implements OnInit {
       next: (user) => {
         this.nicknameControl.setValue(user.nickname);
         this.emailControl.setValue(user.email);
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Failed to load profile:', err);
+        this.isLoading = false;
       },
     });
   }

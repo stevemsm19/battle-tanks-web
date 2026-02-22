@@ -6,9 +6,16 @@
       (clicked)="goBack()"
     ></app-button>
     <div class="top-bar-title">Search Room</div>
+    <div>
+      <app-button
+        label="Create Room"
+        variant="primary"
+        (clicked)="openModal()"
+      ></app-button>
+    </div>
   </header>
 
-  <!-- @if (isModalOpen) {
+  @if (isModalOpen) {
     <div class="modal-overlay" (click)="closeModal()">
       <div class="modal-content" (click)="$event.stopPropagation()">
         <h3>Create Room</h3>
@@ -20,6 +27,7 @@
             id="roomName"
             [(ngModel)]="newRoom.name"
             placeholder="e.g. Room 1"
+            [disabled]="isCreating"
           />
         </div>
 
@@ -30,22 +38,29 @@
             id="maxPlayers"
             [value]="newRoom.maxPlayers"
             readonly
+            [disabled]="isCreating"
           />
         </div>
 
         <div class="modal-actions">
-          <button class="cancel-btn" (click)="closeModal()">Cancel</button>
+          <button
+            class="cancel-btn"
+            (click)="closeModal()"
+            [disabled]="isCreating"
+          >
+            Cancel
+          </button>
           <button
             class="confirm-btn"
             (click)="createRoom()"
-            [disabled]="!newRoom.name"
+            [disabled]="!newRoom.name || isCreating"
           >
-            Create
+            {{ isCreating ? "Creating..." : "Create" }}
           </button>
         </div>
       </div>
     </div>
-  } -->
+  }
   <div class="body-content">
     <div class="table-container">
       <table>

@@ -64,6 +64,7 @@ export class SearchRoomComponent implements OnInit, OnDestroy {
   }
 
   isModalOpen = false;
+  isCreating = false;
   newRoom = {
     name: '',
     maxPlayers: 4,
@@ -75,21 +76,26 @@ export class SearchRoomComponent implements OnInit, OnDestroy {
 
   closeModal() {
     this.isModalOpen = false;
+    this.isCreating = false;
     this.newRoom = { name: '', maxPlayers: 4 };
   }
 
   createRoom() {
+    if (this.isCreating) return;
+    this.isCreating = true;
     console.log('Creating room:', this.newRoom);
     this.roomService
       .createRoom(this.newRoom.name, this.newRoom.maxPlayers)
       .subscribe({
         next: (room) => {
+          this.isCreating = false;
           this.closeModal();
           if (room && room.id) {
             this.router.navigate(['/waiting-room', room.id]);
           }
         },
         error: (error) => {
+          this.isCreating = false;
           console.error('Error creating room:', error);
         },
       });

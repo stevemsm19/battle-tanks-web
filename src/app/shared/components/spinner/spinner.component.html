@@ -1,0 +1,8 @@
+<div class="spinner-container">
+  <div class="spinner" [ngClass]="['size-' + size, 'color-' + color]"></div>
+  @if (message) {
+    <span class="spinner-message" [ngClass]="'text-' + color">{{
+      message
+    }}</span>
+  }
+</div>
