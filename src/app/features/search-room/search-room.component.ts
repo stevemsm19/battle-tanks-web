@@ -5,12 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { RoomService } from './services/search-room.service';
 import { Room } from '../../shared/models/room.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
+import { ToastComponent } from '../../shared/components/toast/toast.component';
 import { SignalrService } from '../../core/services/signalr.service';
-
+//TODO: Refactor
 @Component({
   selector: 'app-rooms',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent],
+  imports: [CommonModule, FormsModule, ButtonComponent, ToastComponent],
   templateUrl: './search-room.component.html',
   styleUrl: './search-room.component.scss',
 })
@@ -59,8 +60,33 @@ export class SearchRoomComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error joining room:', error);
+
+        const errorMessage =
+          error.error?.detail || 'The room is full or does not exist.';
+
+        if (errorMessage.startsWith('User belongs')) {
+          this.activeRoomId = errorMessage.split(':')[1];
+          this.isRedirectModalOpen = true;
+        } else if (errorMessage.startsWith('User is already')) {
+          this.router.navigate(['/waiting-room', roomId]);
+        } else {
+          alert(errorMessage);
+        }
       },
     });
+  }
+
+  isRedirectModalOpen = false;
+  activeRoomId = '';
+
+  redirectToActiveRoom() {
+    this.isRedirectModalOpen = false;
+    this.router.navigate(['/waiting-room', this.activeRoomId]);
+  }
+
+  closeRedirectModal() {
+    this.isRedirectModalOpen = false;
+    this.activeRoomId = '';
   }
 
   isModalOpen = false;

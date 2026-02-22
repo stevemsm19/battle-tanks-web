@@ -1,0 +1,10 @@
+<div class="toast-overlay" (click)="onCancel()">
+  <div class="toast-content" (click)="$event.stopPropagation()">
+    <div class="toast-message" [innerHTML]="message"></div>
+
+    <div class="toast-actions">
+      <button class="cancel-btn" (click)="onCancel()">Cancel</button>
+      <button class="confirm-btn" (click)="onConfirm()">Confirm</button>
+    </div>
+  </div>
+</div>

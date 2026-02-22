@@ -7,7 +7,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { UserService } from './services/user.service';
 import { LoginService } from '../../core/auth/pages/login/services/login.service';
-
+//TODO: Refactor
 @Component({
   selector: 'app-my-account',
   standalone: true,

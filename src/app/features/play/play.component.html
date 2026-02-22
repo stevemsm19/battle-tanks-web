@@ -45,6 +45,50 @@
     </div>
   }
 
+  @if (isJoinModalOpen) {
+    <div class="modal-overlay" (click)="closeJoinModal()">
+      <div class="modal-content" (click)="$event.stopPropagation()">
+        <h3>Enter by ID</h3>
+
+        <div class="form-group">
+          <label for="joinRoomId">Room ID</label>
+          <input
+            type="text"
+            id="joinRoomId"
+            [(ngModel)]="joinRoomId"
+            placeholder="e.g. 123e4567-e89b-12d3..."
+            [disabled]="isJoining"
+            (input)="joinRoomError = null"
+          />
+          @if (joinRoomError) {
+            <span
+              class="error-text"
+              style="color: #ef4444; font-size: 0.8rem; margin-top: 4px"
+              >{{ joinRoomError }}</span
+            >
+          }
+        </div>
+
+        <div class="modal-actions">
+          <button
+            class="cancel-btn"
+            (click)="closeJoinModal()"
+            [disabled]="isJoining"
+          >
+            Cancel
+          </button>
+          <button
+            class="confirm-btn"
+            (click)="joinRoomById()"
+            [disabled]="!joinRoomId || isJoining"
+          >
+            {{ isJoining ? "Joining..." : "Enter" }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
   <div class="body-container">
     <app-sidebar activeMenu="play"></app-sidebar>
 
@@ -75,9 +119,19 @@
             label="Enter by ID"
             variant="secondary"
             [fullWidth]="true"
+            (clicked)="openJoinModal()"
           ></app-button>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+@if (isRedirectModalOpen) {
+  <app-toast
+    message="You already belong to an active room. If you want to join another one, please leave your current room first.<br><br>Do you want to go to your current room?"
+    (cancel)="closeRedirectModal()"
+    (confirm)="redirectToActiveRoom()"
+  >
+  </app-toast>
+}
