@@ -7,15 +7,13 @@ import {
   User,
 } from 'firebase/auth';
 import { app } from '../../../../../../firebase.config';
-import { LocalStorageService } from '../../../../services/local-storage.service';
-import { Observable, firstValueFrom, take } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginService {
   private auth = getAuth(app);
-  private storage = inject(LocalStorageService);
 
   user$ = new Observable<User | null>((subscriber) => {
     return onAuthStateChanged(this.auth, subscriber);
@@ -32,7 +30,6 @@ export class LoginService {
       );
       const user = userCredential.user;
       const token = await user.getIdToken();
-      this.storage.setItem('token', token);
       return token;
     } catch (error) {
       throw error;
@@ -42,17 +39,30 @@ export class LoginService {
   async logout(): Promise<void> {
     try {
       await signOut(this.auth);
-      this.storage.removeItem('token');
     } catch (error) {
       throw error;
     }
   }
 
-  getToken(): string | null {
-    return this.storage.getItem('token');
+  async getToken(): Promise<string | null> {
+    return new Promise((resolve) => {
+      const unsubscribe = onAuthStateChanged(this.auth, async (user) => {
+        unsubscribe();
+        if (user) {
+          const token = await user.getIdToken();
+          resolve(token);
+        } else {
+          resolve(null);
+        }
+      });
+    });
   }
 
-  isLoggedIn(): boolean {
-    return !!this.getToken();
+  isLoggedIn(): Observable<boolean> {
+    return new Observable<boolean>((subscriber) => {
+      return onAuthStateChanged(this.auth, (user) => {
+        subscriber.next(!!user);
+      });
+    });
   }
 }
