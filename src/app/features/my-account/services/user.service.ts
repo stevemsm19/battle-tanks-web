@@ -10,17 +10,17 @@ export class UserService {
   constructor(private http: HttpClientService) {}
 
   getProfile(): Observable<UserProfile> {
-    return this.http.get<UserProfile>('api/users');
+    return this.http.get<UserProfile>('api/user/me');
   }
 
   updateProfile(data: {
     nickName: string;
     email: string;
   }): Observable<UserProfile> {
-    return this.http.put<UserProfile>('api/users', data);
+    return this.http.put<UserProfile>('api/user', data);
   }
 
   deleteAccount(): Observable<void> {
-    return this.http.delete<void>('api/users');
+    return this.http.delete<void>('api/user');
   }
 }

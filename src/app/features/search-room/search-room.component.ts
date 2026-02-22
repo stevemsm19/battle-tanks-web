@@ -80,17 +80,19 @@ export class SearchRoomComponent implements OnInit, OnDestroy {
 
   createRoom() {
     console.log('Creating room:', this.newRoom);
-    this.roomService.createRoom(this.newRoom.name).subscribe({
-      next: (room) => {
-        this.closeModal();
-        if (room && room.id) {
-          this.router.navigate(['/waiting-room', room.id]);
-        }
-      },
-      error: (error) => {
-        console.error('Error creating room:', error);
-      },
-    });
+    this.roomService
+      .createRoom(this.newRoom.name, this.newRoom.maxPlayers)
+      .subscribe({
+        next: (room) => {
+          this.closeModal();
+          if (room && room.id) {
+            this.router.navigate(['/waiting-room', room.id]);
+          }
+        },
+        error: (error) => {
+          console.error('Error creating room:', error);
+        },
+      });
   }
 
   goBack(): void {

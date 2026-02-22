@@ -24,8 +24,8 @@ export class RoomService {
     return this.http.put<void>(`api/room/${roomId}/join`, {});
   }
 
-  createRoom(name: string): Observable<Room> {
-    return this.http.post<Room>('api/room', { name });
+  createRoom(name: string, maxPlayers: number): Observable<Room> {
+    return this.http.post<Room>('api/room', { name, maxPlayers });
   }
 
   getRoomById(roomId: string): Observable<RoomDetails> {
