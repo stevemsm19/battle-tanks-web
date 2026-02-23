@@ -1,28 +1,28 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { RoomService } from './services/search-room.service';
 import { Room } from '../../shared/models/room.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
-import { ToastComponent } from '../../shared/components/toast/toast.component';
+import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { SignalrService } from '../../core/services/signalr.service';
-//TODO: Refactor
+import { SearchRoomStore } from './store/search-room.store';
 @Component({
   selector: 'app-rooms',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent, ToastComponent],
+  imports: [CommonModule, ButtonComponent, ConfirmationModalComponent],
   templateUrl: './search-room.component.html',
   styleUrl: './search-room.component.scss',
+  providers: [SearchRoomStore],
 })
 export class SearchRoomComponent implements OnInit, OnDestroy {
-  rooms: Room[] = [];
+  private readonly store = inject(SearchRoomStore);
+  private readonly signalrService = inject(SignalrService);
+  private readonly router = inject(Router);
 
-  constructor(
-    private roomService: RoomService,
-    private router: Router,
-    private signalrService: SignalrService,
-  ) {}
+  readonly rooms = this.store.rooms;
+  readonly isRedirectModalOpen = this.store.isRedirectModalOpen;
+
+  isModalOpen = signal(false);
 
   readonly statusMap: Record<string, string> = {
     Open: 'Open',
@@ -31,19 +31,12 @@ export class SearchRoomComponent implements OnInit, OnDestroy {
   };
 
   ngOnInit(): void {
-    this.roomService.getRooms().subscribe({
-      next: (data) => {
-        this.rooms = data;
-      },
-      error: (error) => {
-        console.error('Error fetching rooms:', error);
-      },
-    });
+    this.store.loadRooms();
 
     this.signalrService.startConnection().then(() => {
       this.signalrService.joinSearchRoom();
       this.signalrService.on('RoomCreated', (room: Room) => {
-        this.rooms.push(room);
+        this.store.addRoom(room);
       });
     });
   }
@@ -54,77 +47,15 @@ export class SearchRoomComponent implements OnInit, OnDestroy {
   }
 
   joinRoom(roomId: string): void {
-    this.roomService.joinRoom(roomId).subscribe({
-      next: () => {
-        this.router.navigate(['/waiting-room', roomId]);
-      },
-      error: (error) => {
-        console.error('Error joining room:', error);
-
-        const errorMessage =
-          error.error?.detail || 'The room is full or does not exist.';
-
-        if (errorMessage.startsWith('User belongs')) {
-          this.activeRoomId = errorMessage.split(':')[1];
-          this.isRedirectModalOpen = true;
-        } else if (errorMessage.startsWith('User is already')) {
-          this.router.navigate(['/waiting-room', roomId]);
-        } else {
-          alert(errorMessage);
-        }
-      },
-    });
+    this.store.joinRoom(roomId);
   }
 
-  isRedirectModalOpen = false;
-  activeRoomId = '';
-
-  redirectToActiveRoom() {
-    this.isRedirectModalOpen = false;
-    this.router.navigate(['/waiting-room', this.activeRoomId]);
+  redirectToActiveRoom(): void {
+    this.store.redirectToActiveRoom();
   }
 
-  closeRedirectModal() {
-    this.isRedirectModalOpen = false;
-    this.activeRoomId = '';
-  }
-
-  isModalOpen = false;
-  isCreating = false;
-  newRoom = {
-    name: '',
-    maxPlayers: 4,
-  };
-
-  openModal() {
-    this.isModalOpen = true;
-  }
-
-  closeModal() {
-    this.isModalOpen = false;
-    this.isCreating = false;
-    this.newRoom = { name: '', maxPlayers: 4 };
-  }
-
-  createRoom() {
-    if (this.isCreating) return;
-    this.isCreating = true;
-    console.log('Creating room:', this.newRoom);
-    this.roomService
-      .createRoom(this.newRoom.name, this.newRoom.maxPlayers)
-      .subscribe({
-        next: (room) => {
-          this.isCreating = false;
-          this.closeModal();
-          if (room && room.id) {
-            this.router.navigate(['/waiting-room', room.id]);
-          }
-        },
-        error: (error) => {
-          this.isCreating = false;
-          console.error('Error creating room:', error);
-        },
-      });
+  closeRedirectModal(): void {
+    this.store.closeRedirectModal();
   }
 
   goBack(): void {

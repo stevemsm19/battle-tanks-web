@@ -20,7 +20,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (room of rooms; track room.id) {
+          @for (room of rooms(); track room.id) {
             <tr>
               <td>{{ room.name }}</td>
               <td>{{ room.currentPlayers }}/{{ room.maxPlayers }}</td>
@@ -48,7 +48,7 @@
   </div>
 </div>
 
-@if (isRedirectModalOpen) {
+@if (isRedirectModalOpen()) {
   <app-toast
     message="You already belong to an active room. If you want to join another one, please leave your current room first.<br><br>Do you want to go to your current room?"
     (cancel)="closeRedirectModal()"

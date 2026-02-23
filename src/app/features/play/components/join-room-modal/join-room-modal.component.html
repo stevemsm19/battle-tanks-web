@@ -1,0 +1,31 @@
+<div class="modal-overlay" (click)="cancel()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h3>Enter by ID</h3>
+
+    <app-input
+      label="Room ID"
+      type="text"
+      placeholder="e.g. 123e4567-e89b-12d3..."
+      [control]="roomIdControl"
+      [errorMessages]="{
+        required: 'Room ID is required.',
+        serverError: roomIdControl.errors?.['serverError'],
+      }"
+    ></app-input>
+
+    <div class="modal-actions">
+      <app-button
+        label="Cancel"
+        variant="secondary"
+        [disabled]="isJoining()"
+        (clicked)="cancel()"
+      ></app-button>
+      <app-button
+        [label]="isJoining() ? 'Joining...' : 'Enter'"
+        variant="primary"
+        [disabled]="roomIdControl.invalid || isJoining()"
+        (clicked)="joinRoom()"
+      ></app-button>
+    </div>
+  </div>
+</div>

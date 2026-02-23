@@ -7,11 +7,11 @@
     <app-sidebar activeMenu="account"></app-sidebar>
 
     <div class="content-panel">
-      @if (isLoading) {
+      @if (isLoading()) {
         <div class="spinner-container">
           <app-spinner
             size="large"
-            color="primary"
+            color="secondary"
             message="Loading profile..."
           ></app-spinner>
         </div>
@@ -41,7 +41,7 @@
             ></app-input>
             <div class="profile-actions">
               <app-button
-                [label]="isEditing ? 'Cancel' : 'Edit Profile'"
+                [label]="isEditing() ? 'Cancel' : 'Edit Profile'"
                 variant="secondary"
                 (clicked)="toggleEdit()"
               ></app-button>

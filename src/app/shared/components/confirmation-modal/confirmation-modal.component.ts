@@ -5,10 +5,10 @@ import { CommonModule } from '@angular/common';
   selector: 'app-toast',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './toast.component.html',
-  styleUrl: './toast.component.scss',
+  templateUrl: './confirmation-modal.component.html',
+  styleUrl: './confirmation-modal.component.scss',
 })
-export class ToastComponent {
+export class ConfirmationModalComponent {
   @Input() message: string = '';
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();

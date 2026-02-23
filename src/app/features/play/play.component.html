@@ -3,92 +3,6 @@
     <div class="top-bar-title">Play</div>
   </header>
 
-  @if (isModalOpen) {
-    <div class="modal-overlay" (click)="closeModal()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <h3>Create Room</h3>
-
-        <div class="form-group">
-          <label for="roomName">Room Name</label>
-          <input
-            type="text"
-            id="roomName"
-            [(ngModel)]="newRoom.name"
-            placeholder="e.g. My Awesome Room"
-          />
-        </div>
-
-        <div class="form-group">
-          <label for="maxPlayers">Max Players</label>
-          <input
-            type="number"
-            id="maxPlayers"
-            [(ngModel)]="newRoom.maxPlayers"
-            min="2"
-            max="4"
-          />
-        </div>
-
-        <div class="modal-actions">
-          <button class="cancel-btn" (click)="closeModal()">Cancel</button>
-          <button
-            class="confirm-btn"
-            (click)="createRoom()"
-            [disabled]="
-              !newRoom.name || newRoom.maxPlayers < 2 || newRoom.maxPlayers > 4
-            "
-          >
-            Create
-          </button>
-        </div>
-      </div>
-    </div>
-  }
-
-  @if (isJoinModalOpen) {
-    <div class="modal-overlay" (click)="closeJoinModal()">
-      <div class="modal-content" (click)="$event.stopPropagation()">
-        <h3>Enter by ID</h3>
-
-        <div class="form-group">
-          <label for="joinRoomId">Room ID</label>
-          <input
-            type="text"
-            id="joinRoomId"
-            [(ngModel)]="joinRoomId"
-            placeholder="e.g. 123e4567-e89b-12d3..."
-            [disabled]="isJoining"
-            (input)="joinRoomError = null"
-          />
-          @if (joinRoomError) {
-            <span
-              class="error-text"
-              style="color: #ef4444; font-size: 0.8rem; margin-top: 4px"
-              >{{ joinRoomError }}</span
-            >
-          }
-        </div>
-
-        <div class="modal-actions">
-          <button
-            class="cancel-btn"
-            (click)="closeJoinModal()"
-            [disabled]="isJoining"
-          >
-            Cancel
-          </button>
-          <button
-            class="confirm-btn"
-            (click)="joinRoomById()"
-            [disabled]="!joinRoomId || isJoining"
-          >
-            {{ isJoining ? "Joining..." : "Enter" }}
-          </button>
-        </div>
-      </div>
-    </div>
-  }
-
   <div class="body-container">
     <app-sidebar activeMenu="play"></app-sidebar>
 
@@ -110,7 +24,7 @@
             label="Create Room"
             variant="secondary"
             [fullWidth]="true"
-            (clicked)="openModal()"
+            (clicked)="isCreateModalOpen.set(true)"
           ></app-button>
         </div>
         <div class="card">
@@ -119,7 +33,7 @@
             label="Enter by ID"
             variant="secondary"
             [fullWidth]="true"
-            (clicked)="openJoinModal()"
+            (clicked)="isJoinModalOpen.set(true)"
           ></app-button>
         </div>
       </div>
@@ -127,7 +41,21 @@
   </div>
 </div>
 
-@if (isRedirectModalOpen) {
+@if (isCreateModalOpen()) {
+  <app-create-room-modal
+    (closed)="isCreateModalOpen.set(false)"
+    (redirectNeeded)="onRedirectNeeded($event)"
+  ></app-create-room-modal>
+}
+
+@if (isJoinModalOpen()) {
+  <app-join-room-modal
+    (closed)="isJoinModalOpen.set(false)"
+    (redirectNeeded)="onRedirectNeeded($event)"
+  ></app-join-room-modal>
+}
+
+@if (isRedirectModalOpen()) {
   <app-toast
     message="You already belong to an active room. If you want to join another one, please leave your current room first.<br><br>Do you want to go to your current room?"
     (cancel)="closeRedirectModal()"

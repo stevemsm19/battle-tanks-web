@@ -1,5 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { ReactiveFormsModule, FormControl, Validators } from '@angular/forms';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormGroup,
+  FormControl,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar.component';
 import { InputComponent } from '../../shared/components/input/input.component';
@@ -7,7 +12,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { UserService } from './services/user.service';
 import { LoginService } from '../../core/auth/pages/login/services/login.service';
-//TODO: Refactor
+
 @Component({
   selector: 'app-my-account',
   standalone: true,
@@ -22,85 +27,82 @@ import { LoginService } from '../../core/auth/pages/login/services/login.service
   styleUrl: './my-account.component.scss',
 })
 export class MyAccountComponent implements OnInit {
-  nicknameControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required,
-  ]);
-  emailControl = new FormControl({ value: '', disabled: true }, [
-    Validators.required,
-    Validators.email,
-  ]);
-  isEditing = false;
-  isLoading = true;
+  private readonly userService = inject(UserService);
+  private readonly loginService = inject(LoginService);
+  private readonly router = inject(Router);
 
-  constructor(
-    private userService: UserService,
-    private loginService: LoginService,
-    private router: Router,
-  ) {}
+  isLoading = signal(true);
+  isEditing = signal(false);
+
+  profileForm = new FormGroup({
+    nickname: new FormControl({ value: '', disabled: true }, [
+      Validators.required,
+    ]),
+    email: new FormControl({ value: '', disabled: true }, [
+      Validators.required,
+      Validators.email,
+    ]),
+  });
+
+  get nicknameControl() {
+    return this.profileForm.get('nickname') as FormControl;
+  }
+
+  get emailControl() {
+    return this.profileForm.get('email') as FormControl;
+  }
 
   ngOnInit(): void {
+    this.loadProfile();
+  }
+
+  private loadProfile(): void {
     this.userService.getProfile().subscribe({
       next: (user) => {
-        this.nicknameControl.setValue(user.nickname);
-        this.emailControl.setValue(user.email);
-        this.isLoading = false;
+        this.profileForm.patchValue({
+          nickname: user.nickname,
+          email: user.email,
+        });
+        this.isLoading.set(false);
       },
-      error: (err) => {
-        console.error('Failed to load profile:', err);
-        this.isLoading = false;
-      },
+      error: () => this.isLoading.set(false),
     });
   }
 
   toggleEdit(): void {
-    this.isEditing = !this.isEditing;
-    if (this.isEditing) {
-      this.nicknameControl.enable();
-      this.emailControl.enable();
-    } else {
-      this.nicknameControl.disable();
-      this.emailControl.disable();
-    }
+    this.isEditing.update((val) => !val);
+    const action = this.isEditing() ? 'enable' : 'disable';
+    this.profileForm[action]();
   }
 
   saveProfile(): void {
-    this.nicknameControl.markAsTouched();
-    this.emailControl.markAsTouched();
-
-    if (this.nicknameControl.invalid || this.emailControl.invalid) {
-      return;
-    }
+    if (this.profileForm.invalid) return;
 
     const body = {
-      nickName: this.nicknameControl.value!,
-      email: this.emailControl.value!,
+      nickName: this.profileForm.getRawValue().nickname!,
+      email: this.profileForm.getRawValue().email!,
     };
 
     this.userService.updateProfile(body).subscribe({
       next: (user) => {
-        this.nicknameControl.setValue(user.nickname);
-        this.emailControl.setValue(user.email);
+        this.profileForm.patchValue({
+          nickname: user.nickname,
+          email: user.email,
+        });
         this.toggleEdit();
       },
-      error: (err) => {
-        console.error('Failed to update profile:', err);
-      },
+      error: (err) => console.error('Update failed:', err),
     });
   }
 
-  deleteAccount(): void {
-    const confirmed = confirm(
-      'Are you sure you want to delete your account? This action cannot be undone.',
-    );
+  async deleteAccount(): Promise<void> {
+    const confirmed = confirm('Are you sure you want to delete your account?');
     if (!confirmed) return;
 
     this.userService.deleteAccount().subscribe({
       next: async () => {
         await this.loginService.logout();
         this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        console.error('Failed to delete account:', err);
       },
     });
   }
