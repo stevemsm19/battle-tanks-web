@@ -30,6 +30,8 @@ export class WaitingRoomComponent implements OnInit {
   roomId = this.waitingRoomService.roomId;
   isLeaving = signal(false);
   isLeaveModalOpen = signal(false);
+  isInviteModalOpen = signal(false);
+  copyFeedback = signal('');
 
   get players() {
     return this.waitingRoomService.players();
@@ -65,6 +67,21 @@ export class WaitingRoomComponent implements OnInit {
         this.isLeaving.set(false);
         console.error('Error leaving room:', err);
       },
+    });
+  }
+  get inviteMessage(): string {
+    return (
+      'To invite a friend, copy and share this room code: ' + this.roomId()
+    );
+  }
+
+  copyRoomCode(): void {
+    navigator.clipboard.writeText(this.roomId()).then(() => {
+      this.copyFeedback.set('Code copied to clipboard!');
+      setTimeout(() => {
+        this.isInviteModalOpen.set(false);
+        this.copyFeedback.set('');
+      }, 2000);
     });
   }
 }

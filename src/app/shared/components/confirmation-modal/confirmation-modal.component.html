@@ -1,10 +1,24 @@
 <div class="toast-overlay" (click)="onCancel()">
   <div class="toast-content" (click)="$event.stopPropagation()">
-    <div class="toast-message" [innerHTML]="message"></div>
+    <div class="toast-message">{{ message }}</div>
+
+    @if (infoMessage) {
+      <div class="toast-info" [class.toast-info--error]="infoType === 'error'">
+        {{ infoMessage }}
+      </div>
+    }
 
     <div class="toast-actions">
-      <app-button label="Cancel" variant="danger" (clicked)="onCancel()"></app-button>
-      <app-button label="Confirm" variant="primary" (clicked)="onConfirm()"></app-button>
+      <app-button
+        [label]="cancelLabel"
+        variant="danger"
+        (clicked)="onCancel()"
+      ></app-button>
+      <app-button
+        [label]="confirmLabel"
+        variant="primary"
+        (clicked)="onConfirm()"
+      ></app-button>
     </div>
   </div>
 </div>

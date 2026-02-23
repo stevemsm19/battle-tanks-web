@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ButtonComponent } from "../button/button.component";
+import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-toast',
@@ -11,6 +11,10 @@ import { ButtonComponent } from "../button/button.component";
 })
 export class ConfirmationModalComponent {
   @Input() message: string = '';
+  @Input() confirmLabel: string = 'Confirm';
+  @Input() cancelLabel: string = 'Cancel';
+  @Input() infoMessage: string = '';
+  @Input() infoType: 'info' | 'error' = 'info';
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 

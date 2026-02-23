@@ -1,9 +1,7 @@
 <div class="waiting-room-container">
   <header class="room-header">
     <h1 class="title">WAITING ROOM</h1>
-    <p class="subtitle">
-      GAME: {{ roomName() }} - {{ mapName() }}
-    </p>
+    <p class="subtitle">GAME: {{ roomName() }} - {{ mapName() }}</p>
   </header>
 
   <div class="main-content">
@@ -46,6 +44,7 @@
           variant="secondary"
           [fullWidth]="true"
           [fullHeight]="true"
+          (clicked)="isInviteModalOpen.set(true)"
         ></app-button>
       </div>
     </section>
@@ -72,5 +71,16 @@
     message="Are you sure you want to leave the room?"
     (confirm)="confirmLeave()"
     (cancel)="isLeaveModalOpen.set(false)"
+  ></app-toast>
+}
+
+@if (isInviteModalOpen()) {
+  <app-toast
+    [message]="inviteMessage"
+    [infoMessage]="copyFeedback()"
+    confirmLabel="Copy Code"
+    cancelLabel="Close"
+    (confirm)="copyRoomCode()"
+    (cancel)="isInviteModalOpen.set(false)"
   ></app-toast>
 }

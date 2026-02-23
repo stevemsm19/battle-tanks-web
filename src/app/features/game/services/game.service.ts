@@ -57,7 +57,6 @@ export class GameService {
 
   private updateBullets() {
     this.bullets.update((currentBullets) => {
-      // ... same logic
       const remainingBullets: Bullet[] = [];
       const BULLET_SIZE = 0.4;
 
