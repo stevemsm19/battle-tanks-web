@@ -2,9 +2,7 @@
   <header class="room-header">
     <h1 class="title">WAITING ROOM</h1>
     <p class="subtitle">
-      ID: {{ roomId() }}
-      <br />
-      MATCH: {{ roomName() }} - {{ mapName() }}
+      GAME: {{ roomName() }} - {{ mapName() }}
     </p>
   </header>
 
@@ -42,16 +40,37 @@
           </div>
         }
       </div>
-
-      <button class="invite-btn">INVITE FRIENDS</button>
+      <div class="invite-btn">
+        <app-button
+          label="INVITE FRIENDS"
+          variant="secondary"
+          [fullWidth]="true"
+          [fullHeight]="true"
+        ></app-button>
+      </div>
     </section>
 
-    <section class="chat-section">
-      <app-chat></app-chat>
-    </section>
+    <app-chat></app-chat>
   </div>
   <footer class="action-bar">
-    <button class="btn abandon-btn">LEAVE</button>
-    <button class="btn start-btn" (click)="startGame()">START GAME</button>
+    <app-button
+      label="LEAVE"
+      variant="danger"
+      [disabled]="isLeaving()"
+      (clicked)="leaveRoom()"
+    ></app-button>
+    <app-button
+      label="START GAME"
+      variant="primary"
+      (clicked)="startGame()"
+    ></app-button>
   </footer>
 </div>
+
+@if (isLeaveModalOpen()) {
+  <app-toast
+    message="Are you sure you want to leave the room?"
+    (confirm)="confirmLeave()"
+    (cancel)="isLeaveModalOpen.set(false)"
+  ></app-toast>
+}

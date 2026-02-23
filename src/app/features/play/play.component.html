@@ -1,6 +1,6 @@
 <div class="page-container">
   <header class="top-container">
-    <div class="top-bar-title">Play</div>
+    <app-page-title title="Play"></app-page-title>
   </header>
 
   <div class="body-container">
@@ -8,10 +8,12 @@
 
     <div class="content-panel">
       <div class="row-full">
-        <div class="image-placeholder"></div>
+        <div class="image-placeholder">
+          <img src="/assets/images/image.png" alt="Tank" />
+        </div>
         <app-button
           label="Search Room"
-          variant="secondary"
+          variant="primary"
           [fullWidth]="true"
           (clicked)="navigate('/search-room')"
         ></app-button>
@@ -19,19 +21,23 @@
 
       <div class="row-split">
         <div class="card">
-          <div class="image-placeholder"></div>
+          <div class="image-placeholder">
+            <img src="/assets/images/image.png" alt="Tank" />
+          </div>
           <app-button
             label="Create Room"
-            variant="secondary"
+            variant="primary"
             [fullWidth]="true"
             (clicked)="isCreateModalOpen.set(true)"
           ></app-button>
         </div>
         <div class="card">
-          <div class="image-placeholder"></div>
+          <div class="image-placeholder">
+            <img src="/assets/images/image.png" alt="Tank" />
+          </div>
           <app-button
             label="Enter by ID"
-            variant="secondary"
+            variant="primary"
             [fullWidth]="true"
             (clicked)="isJoinModalOpen.set(true)"
           ></app-button>

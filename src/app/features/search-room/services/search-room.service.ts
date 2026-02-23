@@ -24,6 +24,10 @@ export class RoomService {
     return this.http.post<void>('api/room/join', { roomId });
   }
 
+  leaveRoom(roomId: string): Observable<void> {
+    return this.http.delete<void>(`api/room/leave/${roomId}`);
+  }
+
   createRoom(name: string, maxPlayers: number): Observable<Room> {
     return this.http.post<Room>('api/room', { name, maxPlayers });
   }

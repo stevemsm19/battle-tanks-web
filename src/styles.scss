@@ -1,6 +1,14 @@
+@font-face {
+  font-family: "upheavtt";
+  src: url("./assets/fonts/upheavtt.ttf") format("truetype");
+}
+
 /* You can add global styles to this file, and also import other style files */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
+  font-family: "upheavtt";
 }
 
 html,
@@ -9,5 +17,5 @@ body {
   margin: 0;
   padding: 0;
   background-color: #050510;
-  overflow: hidden; 
+  overflow: hidden;
 }

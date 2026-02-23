@@ -12,6 +12,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 import { UserService } from './services/user.service';
 import { LoginService } from '../../core/auth/pages/login/services/login.service';
+import { PageTitleComponent } from '../../shared/components/page-title/page-title.component';
 
 @Component({
   selector: 'app-my-account',
@@ -22,6 +23,7 @@ import { LoginService } from '../../core/auth/pages/login/services/login.service
     InputComponent,
     ButtonComponent,
     SpinnerComponent,
+    PageTitleComponent,
   ],
   templateUrl: './my-account.component.html',
   styleUrl: './my-account.component.scss',

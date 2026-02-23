@@ -5,6 +5,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { CreateRoomConfirmationModalComponent } from './components/create-room-modal/create-room-modal.component';
 import { JoinRoomConfirmationModalComponent } from './components/join-room-modal/join-room-modal.component';
+import { PageTitleComponent } from '../../shared/components/page-title/page-title.component';
 
 @Component({
   selector: 'app-play',
@@ -15,6 +16,7 @@ import { JoinRoomConfirmationModalComponent } from './components/join-room-modal
     ConfirmationModalComponent,
     CreateRoomConfirmationModalComponent,
     JoinRoomConfirmationModalComponent,
+    PageTitleComponent,
   ],
   templateUrl: './play.component.html',
   styleUrl: './play.component.scss',

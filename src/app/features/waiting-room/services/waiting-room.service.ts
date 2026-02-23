@@ -70,6 +70,11 @@ export class WaitingRoomService {
     });
   }
 
+  public leaveRoom() {
+    const id = this.roomId();
+    return this.roomService.leaveRoom(id);
+  }
+
   public sendMessage(message: string) {
     const userId = this.currentUserId;
     const players = this.players();

@@ -1,7 +1,6 @@
 .page-container {
   height: 100vh;
   background-color: #1a1a1a;
-  font-family: "VCR OSD Mono", "Courier New", monospace;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -15,13 +14,6 @@
   padding: 2rem 4rem;
   border-bottom: 1px solid #333;
   flex-shrink: 0;
-
-  .top-bar-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #e0e0e0;
-    letter-spacing: 1px;
-  }
 }
 
 .body-container {

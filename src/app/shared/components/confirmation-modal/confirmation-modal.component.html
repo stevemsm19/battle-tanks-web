@@ -3,8 +3,8 @@
     <div class="toast-message" [innerHTML]="message"></div>
 
     <div class="toast-actions">
-      <button class="cancel-btn" (click)="onCancel()">Cancel</button>
-      <button class="confirm-btn" (click)="onConfirm()">Confirm</button>
+      <app-button label="Cancel" variant="danger" (clicked)="onCancel()"></app-button>
+      <app-button label="Confirm" variant="primary" (clicked)="onConfirm()"></app-button>
     </div>
   </div>
 </div>

@@ -6,10 +6,16 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { SignalrService } from '../../core/services/signalr.service';
 import { SearchRoomStore } from './store/search-room.store';
+import { PageTitleComponent } from '../../shared/components/page-title/page-title.component';
 @Component({
   selector: 'app-rooms',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, ConfirmationModalComponent],
+  imports: [
+    CommonModule,
+    ButtonComponent,
+    ConfirmationModalComponent,
+    PageTitleComponent,
+  ],
   templateUrl: './search-room.component.html',
   styleUrl: './search-room.component.scss',
   providers: [SearchRoomStore],

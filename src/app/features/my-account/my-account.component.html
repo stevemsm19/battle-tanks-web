@@ -1,6 +1,6 @@
 <div class="page-container">
   <header class="top-container">
-    <div class="top-bar-title">My Account</div>
+    <app-page-title title="My Account"></app-page-title>
   </header>
 
   <div class="body-container">
@@ -48,12 +48,13 @@
               <app-button
                 label="Save Profile"
                 variant="primary"
-                [disabled]="!isEditing"
+                [disabled]="!isEditing()"
                 (clicked)="saveProfile()"
               ></app-button>
               <app-button
                 label="Delete Account"
                 variant="danger"
+                [disabled]="isEditing()"
                 (clicked)="deleteAccount()"
               ></app-button>
             </div>

@@ -21,7 +21,6 @@
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
   border: 1px solid #444;
   animation: fadeIn 0.2s ease-out;
-  font-family: "VCR OSD Mono", "Courier New", monospace;
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -29,7 +28,7 @@
 
   h3 {
     margin: 0;
-    color: white;
+    color: #ffd700;
     text-align: center;
     text-transform: uppercase;
   }

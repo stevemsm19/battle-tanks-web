@@ -1,16 +1,22 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { WaitingRoomService } from './services/waiting-room.service';
 import { ChatComponent } from '../../shared/components/chat/chat.component';
+import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 @Component({
   selector: 'app-waiting-room',
   standalone: true,
-  imports: [CommonModule, FormsModule, ChatComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ChatComponent,
+    ConfirmationModalComponent,
+    ButtonComponent,
+  ],
   templateUrl: './waiting-room.component.html',
   styleUrl: './waiting-room.component.scss',
 })
@@ -22,6 +28,8 @@ export class WaitingRoomComponent implements OnInit {
   roomName = this.waitingRoomService.roomName;
   mapName = this.waitingRoomService.mapName;
   roomId = this.waitingRoomService.roomId;
+  isLeaving = signal(false);
+  isLeaveModalOpen = signal(false);
 
   get players() {
     return this.waitingRoomService.players();
@@ -38,5 +46,25 @@ export class WaitingRoomComponent implements OnInit {
 
   startGame() {
     this.router.navigate(['/game']);
+  }
+
+  leaveRoom(): void {
+    this.isLeaveModalOpen.set(true);
+  }
+
+  confirmLeave(): void {
+    this.isLeaveModalOpen.set(false);
+    if (this.isLeaving()) return;
+    this.isLeaving.set(true);
+
+    this.waitingRoomService.leaveRoom().subscribe({
+      next: () => {
+        this.router.navigate(['/play']);
+      },
+      error: (err) => {
+        this.isLeaving.set(false);
+        console.error('Error leaving room:', err);
+      },
+    });
   }
 }

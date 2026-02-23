@@ -14,6 +14,7 @@ export class ButtonComponent {
   @Input() disabled: boolean = false;
   @Input() variant: 'primary' | 'secondary' | 'danger' | 'menu' = 'primary';
   @Input() fullWidth: boolean = false;
+  @Input() fullHeight: boolean = false;
   @Input() isActive: boolean = false;
 
   @Output() clicked = new EventEmitter<void>();
