@@ -1,5 +1,4 @@
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { WaitingRoomService } from '../../waiting-room/services/waiting-room.service';
 
 export interface ChatMessage {
   senderId: string;
@@ -25,6 +24,9 @@ export const ChatStore = signalStore(
     },
     addMessage(message: ChatMessage) {
       patchState(store, { messages: [...store.messages(), message] });
+    },
+    clearMessages() {
+      patchState(store, { messages: [] });
     },
   })),
 );

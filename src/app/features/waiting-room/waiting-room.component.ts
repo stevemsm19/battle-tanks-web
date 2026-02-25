@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { WaitingRoomService } from './services/waiting-room.service';
+import { WaitingRoomStore } from './store/waiting-room.store';
 import { ChatComponent } from '../../shared/components/chat/chat.component';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -19,6 +20,7 @@ import { ButtonComponent } from '../../shared/components/button/button.component
   ],
   templateUrl: './waiting-room.component.html',
   styleUrl: './waiting-room.component.scss',
+  providers: [WaitingRoomStore, WaitingRoomService],
 })
 export class WaitingRoomComponent implements OnInit {
   private waitingRoomService = inject(WaitingRoomService);
@@ -28,14 +30,11 @@ export class WaitingRoomComponent implements OnInit {
   roomName = this.waitingRoomService.roomName;
   mapName = this.waitingRoomService.mapName;
   roomId = this.waitingRoomService.roomId;
+  players = this.waitingRoomService.players;
   isLeaving = signal(false);
   isLeaveModalOpen = signal(false);
   isInviteModalOpen = signal(false);
   copyFeedback = signal('');
-
-  get players() {
-    return this.waitingRoomService.players();
-  }
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {

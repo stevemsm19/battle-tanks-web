@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
-import { Room } from '../../../shared/models/room.model';
+import { Room } from '../models/room.model';
 import { RoomService } from '../services/search-room.service';
 
 interface SearchRoomState {

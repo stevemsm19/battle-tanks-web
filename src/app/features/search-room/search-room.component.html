@@ -50,7 +50,7 @@
 
 @if (isRedirectModalOpen()) {
   <app-toast
-    message="You already belong to an active room. If you want to join another one, please leave your current room first.<br><br>Do you want to go to your current room?"
+    message="You already belong to an active room. If you want to join another one, please leave your current room first. Do you want to go to your current room?"
     (cancel)="closeRedirectModal()"
     (confirm)="redirectToActiveRoom()"
   >

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Room } from '../../shared/models/room.model';
+import { Room } from './models/room.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { SignalrService } from '../../core/services/signalr.service';
