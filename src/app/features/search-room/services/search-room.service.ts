@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClientService } from '../../../core/services/http-client.service';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Room } from '../models/room.model';
 import { Player } from '../../../shared/models/player.model';
 
@@ -10,14 +11,26 @@ export interface RoomDetails {
   players: Partial<Player>[];
 }
 
+export interface PagedResult<T> {
+  items: T[];
+  totalCount: number;
+  page: number;
+  size: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class RoomService {
   constructor(private http: HttpClientService) {}
 
-  getRooms(): Observable<Room[]> {
-    return this.http.get<Room[]>('api/room');
+  getRooms(page = 1, size = 10, status = 'Open'): Observable<Room[]> {
+    return this.http
+      .get<PagedResult<Room>>(`api/room?page=${page}&size=${size}&status=${status}`)
+      .pipe(map((response) => response.items));
   }
 
   joinRoom(roomId: string): Observable<void> {

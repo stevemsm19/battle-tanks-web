@@ -60,7 +60,7 @@ export class WaitingRoomComponent implements OnInit {
 
     this.waitingRoomService.leaveRoom().subscribe({
       next: () => {
-        this.router.navigate(['/play']);
+        this.router.navigate(['/search-room']);
       },
       error: (err) => {
         this.isLeaving.set(false);

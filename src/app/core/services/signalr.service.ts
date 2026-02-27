@@ -1,15 +1,21 @@
 import { Injectable } from '@angular/core';
+import { inject } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
+import { LoginService } from '../auth/pages/login/services/login.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SignalrService {
   private hubConnection!: signalR.HubConnection;
+  private loginService = inject(LoginService);
 
   constructor() {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('http://localhost:5000/gameHub')
+      .withUrl('http://localhost:5000/gameHub', {
+        accessTokenFactory: () =>
+          this.loginService.getToken().then((t) => t ?? ''),
+      })
       .withAutomaticReconnect()
       .configureLogging(signalR.LogLevel.Information)
       .build();

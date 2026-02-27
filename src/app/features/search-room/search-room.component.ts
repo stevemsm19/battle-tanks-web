@@ -44,12 +44,16 @@ export class SearchRoomComponent implements OnInit, OnDestroy {
       this.signalrService.on('RoomCreated', (room: Room) => {
         this.store.addRoom(room);
       });
+      this.signalrService.on('RoomStatusChanged', (data: { roomId: string }) => {
+        this.store.removeRoom(data.roomId);
+      });
     });
   }
 
   ngOnDestroy(): void {
     this.signalrService.leaveSearchRoom();
     this.signalrService.off('RoomCreated');
+    this.signalrService.off('RoomStatusChanged');
   }
 
   joinRoom(roomId: string): void {

@@ -31,6 +31,12 @@ export const SearchRoomStore = signalStore(
         patchState(store, { rooms: [...store.rooms(), room] });
       },
 
+      removeRoom(roomId: string): void {
+        patchState(store, {
+          rooms: store.rooms().filter((r) => r.id !== roomId),
+        });
+      },
+
       joinRoom(roomId: string): void {
         roomService.joinRoom(roomId).subscribe({
           next: () => router.navigate(['/waiting-room', roomId]),
