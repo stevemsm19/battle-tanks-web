@@ -4,6 +4,7 @@ export interface WaitingPlayer {
   id: string;
   name: string;
   isOwner: boolean;
+  firebaseUid: string;
 }
 
 type WaitingRoomState = {

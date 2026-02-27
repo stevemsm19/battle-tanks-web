@@ -10,9 +10,10 @@ import { SidebarComponent } from '../../shared/components/sidebar/sidebar.compon
 import { InputComponent } from '../../shared/components/input/input.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
-import { UserService } from './services/user.service';
+
 import { LoginService } from '../../core/auth/pages/login/services/login.service';
 import { PageTitleComponent } from '../../shared/components/page-title/page-title.component';
+import { UserService } from '../../domain/users/services/user.service';
 
 @Component({
   selector: 'app-my-account',

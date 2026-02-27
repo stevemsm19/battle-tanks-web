@@ -53,6 +53,7 @@
     <app-button
       label="START GAME"
       variant="primary"
+      [disabled]="!isOwner() || isStarting()"
       (clicked)="startGame()"
     ></app-button>
   </footer>

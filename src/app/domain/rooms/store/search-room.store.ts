@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { getState, patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { Room } from '../models/room.model';
 import { RoomService } from '../services/search-room.service';
 
@@ -66,6 +66,14 @@ export const SearchRoomStore = signalStore(
       removeRoom(roomId: string): void {
         patchState(store, {
           rooms: store.rooms().filter((r) => r.id !== roomId),
+        });
+      },
+
+      updateRoomPlayerCount(roomId: string, currentPlayers: number): void {
+        patchState(store, {
+          rooms: store
+            .rooms()
+            .map((r) => (r.id === roomId ? { ...r, currentPlayers } : r)),
         });
       },
 

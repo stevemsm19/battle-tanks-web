@@ -1,5 +1,5 @@
+import { ChatMessage } from '../components/chat/store/chat.store';
 import { Player } from '../models/player.model';
-import { ChatMessage } from '../../features/waiting-room/services/waiting-room.service';
 
 export const simulateIncomingPlayers = (
   mockPlayers: Player[],

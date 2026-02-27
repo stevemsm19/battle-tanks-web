@@ -38,7 +38,7 @@ export const routes: Routes = [
     component: WaitingRoomComponent,
     canActivate: [authGuard],
   },
-  { path: 'game', component: BoardComponent, canActivate: [authGuard] },
+  { path: 'game/:id', component: BoardComponent, canActivate: [authGuard] },
   {
     path: 'controls',
     component: ControlsComponent,

@@ -1,9 +1,9 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WaitingRoomService } from './services/waiting-room.service';
-import { WaitingRoomStore } from './store/waiting-room.store';
+import { WaitingRoomService } from '../../domain/rooms/services/waiting-room.service';
+import { WaitingRoomStore } from '../../domain/rooms/store/waiting-room.store';
 import { ChatComponent } from '../../shared/components/chat/chat.component';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { ButtonComponent } from '../../shared/components/button/button.component';
@@ -36,6 +36,13 @@ export class WaitingRoomComponent implements OnInit {
   isInviteModalOpen = signal(false);
   copyFeedback = signal('');
 
+  isOwner = computed(() => {
+    const uid = this.waitingRoomService.currentUserId;
+    const players = this.players();
+
+    return players.some((p) => p.firebaseUid === uid && p.isOwner);
+  });
+
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
@@ -45,8 +52,25 @@ export class WaitingRoomComponent implements OnInit {
     });
   }
 
+  isStarting = signal(false);
+
   startGame() {
-    this.router.navigate(['/game']);
+    if (this.isStarting()) return;
+    this.isStarting.set(true);
+
+    this.waitingRoomService.startGame().subscribe({
+      next: () => {
+        this.isStarting.set(false);
+      },
+      error: (err) => {
+        this.isStarting.set(false);
+        console.error('Error starting game:', err);
+        alert(
+          err.error?.detail ||
+            'Failed to start the game. Make sure you are the owner and there are at least 2 players.',
+        );
+      },
+    });
   }
 
   leaveRoom(): void {

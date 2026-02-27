@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { Room } from './models/room.model';
+import { Room } from '../../domain/rooms/models/room.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
 import { SignalrService } from '../../core/services/signalr.service';
-import { SearchRoomStore } from './store/search-room.store';
+import { SearchRoomStore } from '../../domain/rooms/store/search-room.store';
 import { PageTitleComponent } from '../../shared/components/page-title/page-title.component';
 
 @Component({
@@ -66,6 +66,12 @@ export class SearchRoomComponent implements OnInit, AfterViewInit, OnDestroy {
           this.store.removeRoom(data.roomId);
         },
       );
+      this.signalrService.on(
+        'RoomPlayerCountChanged',
+        (data: { roomId: string; currentPlayers: number }) => {
+          this.store.updateRoomPlayerCount(data.roomId, data.currentPlayers);
+        },
+      );
     });
   }
 
@@ -87,6 +93,7 @@ export class SearchRoomComponent implements OnInit, AfterViewInit, OnDestroy {
     this.signalrService.leaveSearchRoom();
     this.signalrService.off('RoomCreated');
     this.signalrService.off('RoomStatusChanged');
+    this.signalrService.off('RoomPlayerCountChanged');
   }
 
   joinRoom(roomId: string): void {

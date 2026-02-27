@@ -3,7 +3,7 @@ import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { RoomService } from '../../../search-room/services/search-room.service';
+import { RoomService } from '../../../../domain/rooms/services/search-room.service';
 
 @Component({
   selector: 'app-join-room-modal',
