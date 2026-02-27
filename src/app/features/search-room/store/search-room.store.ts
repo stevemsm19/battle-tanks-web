@@ -1,6 +1,6 @@
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
+import { getState, patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { Room } from '../models/room.model';
 import { RoomService } from '../services/search-room.service';
 
@@ -8,12 +8,18 @@ interface SearchRoomState {
   rooms: Room[];
   isRedirectModalOpen: boolean;
   activeRoomId: string;
+  page: number;
+  hasNextPage: boolean;
+  isLoadingMore: boolean;
 }
 
 const initialState: SearchRoomState = {
   rooms: [],
   isRedirectModalOpen: false,
   activeRoomId: '',
+  page: 1,
+  hasNextPage: false,
+  isLoadingMore: false,
 };
 
 export const SearchRoomStore = signalStore(
@@ -21,9 +27,35 @@ export const SearchRoomStore = signalStore(
   withMethods(
     (store, roomService = inject(RoomService), router = inject(Router)) => ({
       loadRooms(): void {
-        roomService.getRooms().subscribe({
-          next: (rooms) => patchState(store, { rooms }),
+        roomService.getRooms(1).subscribe({
+          next: (result) =>
+            patchState(store, {
+              rooms: result.items,
+              page: 1,
+              hasNextPage: result.hasNextPage,
+            }),
           error: (err) => console.error('Error fetching rooms:', err),
+        });
+      },
+
+      loadNextPage(): void {
+        if (!store.hasNextPage() || store.isLoadingMore()) return;
+
+        const nextPage = store.page() + 1;
+        patchState(store, { isLoadingMore: true });
+
+        roomService.getRooms(nextPage).subscribe({
+          next: (result) =>
+            patchState(store, {
+              rooms: [...store.rooms(), ...result.items],
+              page: nextPage,
+              hasNextPage: result.hasNextPage,
+              isLoadingMore: false,
+            }),
+          error: (err) => {
+            console.error('Error loading next page:', err);
+            patchState(store, { isLoadingMore: false });
+          },
         });
       },
 

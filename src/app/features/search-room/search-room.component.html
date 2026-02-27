@@ -42,8 +42,15 @@
               <td colspan="4" class="no-rooms">No rooms available</td>
             </tr>
           }
+          @if (isLoadingMore()) {
+            <tr>
+              <td colspan="4" class="loading-more">Loading more rooms...</td>
+            </tr>
+          }
         </tbody>
       </table>
+
+      <div #endOfList style="height: 1px"></div>
     </div>
   </div>
 </div>

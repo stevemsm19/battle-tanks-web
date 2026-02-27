@@ -27,10 +27,14 @@ export interface PagedResult<T> {
 export class RoomService {
   constructor(private http: HttpClientService) {}
 
-  getRooms(page = 1, size = 10, status = 'Open'): Observable<Room[]> {
-    return this.http
-      .get<PagedResult<Room>>(`api/room?page=${page}&size=${size}&status=${status}`)
-      .pipe(map((response) => response.items));
+  getRooms(
+    page = 1,
+    size = 10,
+    status = 'Open',
+  ): Observable<PagedResult<Room>> {
+    return this.http.get<PagedResult<Room>>(
+      `api/room?page=${page}&size=${size}&status=${status}`,
+    );
   }
 
   joinRoom(roomId: string): Observable<void> {

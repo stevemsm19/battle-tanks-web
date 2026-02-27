@@ -1,4 +1,13 @@
-import { Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  inject,
+  signal,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Room } from './models/room.model';
@@ -7,6 +16,7 @@ import { ConfirmationModalComponent } from '../../shared/components/confirmation
 import { SignalrService } from '../../core/services/signalr.service';
 import { SearchRoomStore } from './store/search-room.store';
 import { PageTitleComponent } from '../../shared/components/page-title/page-title.component';
+
 @Component({
   selector: 'app-rooms',
   standalone: true,
@@ -20,13 +30,19 @@ import { PageTitleComponent } from '../../shared/components/page-title/page-titl
   styleUrl: './search-room.component.scss',
   providers: [SearchRoomStore],
 })
-export class SearchRoomComponent implements OnInit, OnDestroy {
+export class SearchRoomComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly store = inject(SearchRoomStore);
   private readonly signalrService = inject(SignalrService);
   private readonly router = inject(Router);
 
+  @ViewChild('endOfList') endOfList!: ElementRef<HTMLElement>;
+
+  private observer!: IntersectionObserver;
+
   readonly rooms = this.store.rooms;
   readonly isRedirectModalOpen = this.store.isRedirectModalOpen;
+  readonly isLoadingMore = this.store.isLoadingMore;
+  readonly hasNextPage = this.store.hasNextPage;
 
   isModalOpen = signal(false);
 
@@ -44,13 +60,30 @@ export class SearchRoomComponent implements OnInit, OnDestroy {
       this.signalrService.on('RoomCreated', (room: Room) => {
         this.store.addRoom(room);
       });
-      this.signalrService.on('RoomStatusChanged', (data: { roomId: string }) => {
-        this.store.removeRoom(data.roomId);
-      });
+      this.signalrService.on(
+        'RoomStatusChanged',
+        (data: { roomId: string }) => {
+          this.store.removeRoom(data.roomId);
+        },
+      );
     });
   }
 
+  ngAfterViewInit(): void {
+    this.observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          this.store.loadNextPage();
+        }
+      },
+      { threshold: 0.1 },
+    );
+
+    this.observer.observe(this.endOfList.nativeElement);
+  }
+
   ngOnDestroy(): void {
+    this.observer?.disconnect();
     this.signalrService.leaveSearchRoom();
     this.signalrService.off('RoomCreated');
     this.signalrService.off('RoomStatusChanged');
