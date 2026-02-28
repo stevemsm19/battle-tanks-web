@@ -17,35 +17,6 @@
           ></div>
         }
       }
-
-      @for (bullet of bullets(); track bullet.id) {
-        <div
-          class="bullet"
-          [style.left]="'calc(' + (bullet.x - 1) + ' * (100% / 24))'"
-          [style.top]="'calc(' + (bullet.y - 1) + ' * (100% / 16))'"
-        ></div>
-      }
-
-      @for (player of activePlayers(); track player.name) {
-        <div
-          class="tank-unit"
-          [style.left]="'calc(' + ((player.x || 1) - 1) + ' * (100% / 24))'"
-          [style.top]="'calc(' + ((player.y || 1) - 1) + ' * (100% / 16))'"
-        >
-          <div
-            class="tank-body"
-            [class]="
-              player.name === currentUser()?.name ? healthStatus() : 'high'
-            "
-          >
-            <div
-              class="tank-turret"
-              [class]="player.direction || 'UP' | lowercase"
-            ></div>
-          </div>
-          <div class="tank-name">{{ player.name }}</div>
-        </div>
-      }
     </div>
 
     <div class="dashboard-panel">
@@ -54,7 +25,7 @@
 
         <div class="stat-group">
           <label>PLAYER</label>
-          <div class="value">{{ currentUser()?.name }}</div>
+          <div class="value">Steven</div>
         </div>
 
         <div class="stat-group">
@@ -62,23 +33,17 @@
           <div class="bar-container">
             <div
               class="bar-fill"
-              [style.width.%]="health()"
-              [class]="healthStatus()"
+              [style.width.%]="100"
+              [class]="'high'"
             ></div>
           </div>
-          <div class="value-text">{{ health() }}%</div>
-        </div>
-
-        <div class="stat-group">
-          <button (click)="takeDamage()" class="damage-simulation-btn">
-            TEST DAMAGE
-          </button>
+          <div class="value-text">100%</div>
         </div>
 
         <div class="stat-group">
           <label>SCORE</label>
           <div class="value highlight">
-            {{ formattedScore() }}
+            000000
           </div>
         </div>
 

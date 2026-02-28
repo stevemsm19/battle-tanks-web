@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClientService } from '../../../core/services/http-client.service';
 import { Observable } from 'rxjs';
 import { Room } from '../models/room.model';
-import { Player } from '../../../shared/models/player.model';
+import { Player } from '../models/player.model';
 
 export interface RoomDetails {
   roomId: string;
