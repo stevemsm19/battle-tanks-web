@@ -84,6 +84,7 @@ export class MyAccountComponent implements OnInit {
     const body = {
       nickName: this.profileForm.getRawValue().nickname!,
       email: this.profileForm.getRawValue().email!,
+      avatarUrl: '',
     };
 
     this.userService.updateProfile(body).subscribe({

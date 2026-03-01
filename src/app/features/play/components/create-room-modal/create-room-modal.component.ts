@@ -1,4 +1,4 @@
-import { Component, inject, output, signal } from '@angular/core';
+import { Component, inject, OnInit, output, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -8,7 +8,8 @@ import {
 import { Router } from '@angular/router';
 import { InputComponent } from '../../../../shared/components/input/input.component';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { RoomService } from '../../../../domain/rooms/services/search-room.service';
+import { RoomService } from '../../../../domain/rooms/services/room.service';
+import { GameMap } from '../../../../domain/rooms/models/game-map.model';
 
 @Component({
   selector: 'app-create-room-modal',
@@ -25,6 +26,14 @@ export class CreateRoomConfirmationModalComponent {
   redirectNeeded = output<string>();
 
   isCreating = signal(false);
+  availableMaps = signal<GameMap[]>([]);
+
+  ngOnInit(): void {
+    this.roomService.getMaps().subscribe({
+      next: (maps) => this.availableMaps.set(maps),
+      error: (err) => console.error('Error fetching game maps', err),
+    });
+  }
 
   roomForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -33,6 +42,7 @@ export class CreateRoomConfirmationModalComponent {
       Validators.min(2),
       Validators.max(4),
     ]),
+    gameMapId: new FormControl('', [Validators.required]),
   });
 
   get nameControl() {
@@ -47,9 +57,9 @@ export class CreateRoomConfirmationModalComponent {
     if (this.roomForm.invalid || this.isCreating()) return;
 
     this.isCreating.set(true);
-    const { name, maxPlayers } = this.roomForm.getRawValue();
+    const { name, maxPlayers, gameMapId } = this.roomForm.getRawValue();
 
-    this.roomService.createRoom(name!, maxPlayers!).subscribe({
+    this.roomService.createRoom(name!, maxPlayers!, gameMapId!).subscribe({
       next: (room) => {
         this.isCreating.set(false);
         this.closed.emit();

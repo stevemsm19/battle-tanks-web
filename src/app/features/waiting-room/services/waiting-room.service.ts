@@ -1,10 +1,13 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { SignalrService } from '../../../core/services/signalr.service';
-import { RoomService } from './search-room.service';
+import { RoomService } from '../../../domain/rooms/services/room.service';
 import { LoginService } from '../../../core/auth/pages/login/services/login.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { WaitingRoomStore, WaitingPlayer } from '../store/waiting-room.store';
+import {
+  WaitingRoomStore,
+  WaitingPlayer,
+} from '../../../domain/rooms/store/waiting-room.store';
 
 @Injectable()
 export class WaitingRoomService {
@@ -16,7 +19,7 @@ export class WaitingRoomService {
   private firebaseUser = toSignal(this.loginService.user$);
 
   public roomName = this.waitingRoomStore.roomName;
-  public mapName = signal('Default Map');
+  public mapName = this.waitingRoomStore.mapName;
   public roomId = this.waitingRoomStore.roomId;
   readonly players = this.waitingRoomStore.players;
 
@@ -29,7 +32,7 @@ export class WaitingRoomService {
   }
 
   public loadRoomDetails(id: string) {
-    this.waitingRoomStore.setRoom(id, '');
+    this.waitingRoomStore.setRoom(id, '', '');
 
     this.signalrService
       .invoke('JoinGame', id)
@@ -37,7 +40,11 @@ export class WaitingRoomService {
 
     this.roomService.getRoomById(id).subscribe({
       next: (details) => {
-        this.waitingRoomStore.setRoom(id, details.roomName);
+        this.waitingRoomStore.setRoom(
+          details.room.id,
+          details.room.name,
+          details.room.gameMapName,
+        );
 
         const players: WaitingPlayer[] = details.players.map((p: any) => ({
           id: p.id || '',
@@ -72,7 +79,12 @@ export class WaitingRoomService {
   private addListeners() {
     this.signalrService.on(
       'PlayerJoined',
-      (player: { id: string; firebaseUid: string; name: string; isOwner?: boolean }) => {
+      (player: {
+        id: string;
+        firebaseUid: string;
+        name: string;
+        isOwner?: boolean;
+      }) => {
         console.log('SignalR [PlayerJoined]:', player);
         this.waitingRoomStore.addPlayer({
           id: player.id,

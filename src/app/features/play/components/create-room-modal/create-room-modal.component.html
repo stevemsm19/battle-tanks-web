@@ -23,6 +23,16 @@
         }"
       ></app-input>
 
+      <div class="form-group select-map-group">
+        <label for="mapSelect">Select Map</label>
+        <select id="mapSelect" formControlName="gameMapId">
+          <option value="" disabled selected>-- Choose a Map --</option>
+          @for (map of availableMaps(); track map.id) {
+            <option [value]="map.id">{{ map.name }}</option>
+          }
+        </select>
+      </div>
+
       <div class="modal-actions">
         <app-button
           label="Cancel"

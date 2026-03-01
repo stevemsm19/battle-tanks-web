@@ -9,13 +9,12 @@ import {
   ElementRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
-import { Room } from '../../domain/rooms/models/room.model';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
-import { SignalrService } from '../../core/services/signalr.service';
 import { SearchRoomStore } from '../../domain/rooms/store/search-room.store';
+import { SearchRoomService } from './services/search-room.service';
 import { PageTitleComponent } from '../../shared/components/page-title/page-title.component';
+import { SpinnerComponent } from '../../shared/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-rooms',
@@ -25,24 +24,23 @@ import { PageTitleComponent } from '../../shared/components/page-title/page-titl
     ButtonComponent,
     ConfirmationModalComponent,
     PageTitleComponent,
+    SpinnerComponent,
   ],
   templateUrl: './search-room.component.html',
   styleUrl: './search-room.component.scss',
-  providers: [SearchRoomStore],
+  providers: [SearchRoomStore, SearchRoomService],
 })
 export class SearchRoomComponent implements OnInit, AfterViewInit, OnDestroy {
-  private readonly store = inject(SearchRoomStore);
-  private readonly signalrService = inject(SignalrService);
-  private readonly router = inject(Router);
+  public readonly searchRoomService = inject(SearchRoomService);
 
   @ViewChild('endOfList') endOfList!: ElementRef<HTMLElement>;
 
   private observer!: IntersectionObserver;
 
-  readonly rooms = this.store.rooms;
-  readonly isRedirectModalOpen = this.store.isRedirectModalOpen;
-  readonly isLoadingMore = this.store.isLoadingMore;
-  readonly hasNextPage = this.store.hasNextPage;
+  readonly rooms = this.searchRoomService.rooms;
+  readonly isRedirectModalOpen = this.searchRoomService.isRedirectModalOpen;
+  readonly isLoadingMore = this.searchRoomService.isLoadingMore;
+  readonly hasNextPage = this.searchRoomService.hasNextPage;
 
   isModalOpen = signal(false);
 
@@ -53,33 +51,14 @@ export class SearchRoomComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   ngOnInit(): void {
-    this.store.loadRooms();
-
-    this.signalrService.startConnection().then(() => {
-      this.signalrService.joinSearchRoom();
-      this.signalrService.on('RoomCreated', (room: Room) => {
-        this.store.addRoom(room);
-      });
-      this.signalrService.on(
-        'RoomStatusChanged',
-        (data: { roomId: string }) => {
-          this.store.removeRoom(data.roomId);
-        },
-      );
-      this.signalrService.on(
-        'RoomPlayerCountChanged',
-        (data: { roomId: string; currentPlayers: number }) => {
-          this.store.updateRoomPlayerCount(data.roomId, data.currentPlayers);
-        },
-      );
-    });
+    this.searchRoomService.loadRooms();
   }
 
   ngAfterViewInit(): void {
     this.observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          this.store.loadNextPage();
+          this.searchRoomService.loadNextPage();
         }
       },
       { threshold: 0.1 },
@@ -90,25 +69,21 @@ export class SearchRoomComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
-    this.signalrService.leaveSearchRoom();
-    this.signalrService.off('RoomCreated');
-    this.signalrService.off('RoomStatusChanged');
-    this.signalrService.off('RoomPlayerCountChanged');
   }
 
   joinRoom(roomId: string): void {
-    this.store.joinRoom(roomId);
+    this.searchRoomService.joinRoom(roomId);
   }
 
   redirectToActiveRoom(): void {
-    this.store.redirectToActiveRoom();
+    this.searchRoomService.redirectToActiveRoom();
   }
 
   closeRedirectModal(): void {
-    this.store.closeRedirectModal();
+    this.searchRoomService.closeRedirectModal();
   }
 
   goBack(): void {
-    this.router.navigate(['/play']);
+    this.searchRoomService.goBack();
   }
 }

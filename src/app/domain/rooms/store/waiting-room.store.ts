@@ -11,19 +11,21 @@ type WaitingRoomState = {
   players: WaitingPlayer[];
   roomId: string;
   roomName: string;
+  mapName: string;
 };
 
 const initialState: WaitingRoomState = {
   players: [],
   roomId: '',
   roomName: '',
+  mapName: '',
 };
 
 export const WaitingRoomStore = signalStore(
   withState(initialState),
   withMethods((store) => ({
-    setRoom(roomId: string, roomName: string) {
-      patchState(store, { roomId, roomName });
+    setRoom(roomId: string, roomName: string, mapName: string) {
+      patchState(store, { roomId, roomName, mapName });
     },
 
     setPlayers(players: WaitingPlayer[]) {

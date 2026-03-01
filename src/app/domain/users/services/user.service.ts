@@ -16,6 +16,7 @@ export class UserService {
   updateProfile(data: {
     nickName: string;
     email: string;
+    avatarUrl?: string;
   }): Observable<UserProfile> {
     return this.http.put<UserProfile>('api/user', data);
   }

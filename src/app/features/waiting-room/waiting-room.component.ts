@@ -2,7 +2,7 @@ import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { WaitingRoomService } from '../../domain/rooms/services/waiting-room.service';
+import { WaitingRoomService } from './services/waiting-room.service';
 import { WaitingRoomStore } from '../../domain/rooms/store/waiting-room.store';
 import { ChatComponent } from '../../shared/components/chat/chat.component';
 import { ConfirmationModalComponent } from '../../shared/components/confirmation-modal/confirmation-modal.component';
@@ -54,6 +54,12 @@ export class WaitingRoomComponent implements OnInit {
 
   isStarting = signal(false);
 
+  get inviteMessage(): string {
+    return (
+      'To invite a friend, copy and share this room code: ' + this.roomId()
+    );
+  }
+
   startGame() {
     if (this.isStarting()) return;
     this.isStarting.set(true);
@@ -92,12 +98,7 @@ export class WaitingRoomComponent implements OnInit {
       },
     });
   }
-  get inviteMessage(): string {
-    return (
-      'To invite a friend, copy and share this room code: ' + this.roomId()
-    );
-  }
-
+  
   copyRoomCode(): void {
     navigator.clipboard.writeText(this.roomId()).then(() => {
       this.copyFeedback.set('Code copied to clipboard!');

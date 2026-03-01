@@ -73,6 +73,7 @@ export class SignalrService {
 
   public on(methodName: string, newMethod: (...args: any[]) => void) {
     this.hubConnection.on(methodName, (...args) => {
+      console.log(`[SignalR Notification] ${methodName}:`, ...args);
       newMethod(...args);
     });
   }

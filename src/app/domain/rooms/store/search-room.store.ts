@@ -1,11 +1,14 @@
 import { inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { Room } from '../models/room.model';
-import { RoomService } from '../services/search-room.service';
+import { RoomService } from '../services/room.service';
+import { GameMap } from '../models/game-map.model';
 
 interface SearchRoomState {
   rooms: Room[];
+  maps: GameMap[];
   isRedirectModalOpen: boolean;
   activeRoomId: string;
   page: number;
@@ -15,6 +18,7 @@ interface SearchRoomState {
 
 const initialState: SearchRoomState = {
   rooms: [],
+  maps: [],
   isRedirectModalOpen: false,
   activeRoomId: '',
   page: 1,
@@ -35,6 +39,14 @@ export const SearchRoomStore = signalStore(
               hasNextPage: result.hasNextPage,
             }),
           error: (err) => console.error('Error fetching rooms:', err),
+        });
+      },
+
+      loadMaps(): void {
+        roomService.getMaps().subscribe({
+          next: (maps: GameMap[]) => patchState(store, { maps }),
+          error: (err: HttpErrorResponse) =>
+            console.error('Error fetching game maps:', err),
         });
       },
 
