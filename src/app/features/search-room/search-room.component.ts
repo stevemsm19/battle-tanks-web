@@ -40,6 +40,7 @@ export class SearchRoomComponent implements OnInit, AfterViewInit, OnDestroy {
   readonly rooms = this.searchRoomService.rooms;
   readonly isRedirectModalOpen = this.searchRoomService.isRedirectModalOpen;
   readonly isLoadingMore = this.searchRoomService.isLoadingMore;
+  readonly isLoadingRooms = this.searchRoomService.isLoadingRooms;
   readonly hasNextPage = this.searchRoomService.hasNextPage;
 
   isModalOpen = signal(false);

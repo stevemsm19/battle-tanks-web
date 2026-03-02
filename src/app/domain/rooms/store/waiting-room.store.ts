@@ -2,9 +2,9 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 
 export interface WaitingPlayer {
   id: string;
+  firebaseUid: string;
   name: string;
   isOwner: boolean;
-  firebaseUid: string;
 }
 
 type WaitingRoomState = {

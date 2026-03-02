@@ -17,6 +17,16 @@
           ></div>
         }
       }
+
+      @for (player of players(); track player.userId) {
+        <app-tank
+          [x]="player.x"
+          [y]="player.y"
+          [direction]="player.direction"
+          [name]="player.name"
+          [health]="player.health"
+        ></app-tank>
+      }
     </div>
 
     <div class="dashboard-panel">
@@ -31,20 +41,14 @@
         <div class="stat-group">
           <label>HEALTH</label>
           <div class="bar-container">
-            <div
-              class="bar-fill"
-              [style.width.%]="100"
-              [class]="'high'"
-            ></div>
+            <div class="bar-fill" [style.width.%]="100" [class]="'high'"></div>
           </div>
           <div class="value-text">100%</div>
         </div>
 
         <div class="stat-group">
           <label>SCORE</label>
-          <div class="value highlight">
-            000000
-          </div>
+          <div class="value highlight">000000</div>
         </div>
 
         <div class="stat-group">

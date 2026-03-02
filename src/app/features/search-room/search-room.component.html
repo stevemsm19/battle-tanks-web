@@ -20,41 +20,45 @@
           </tr>
         </thead>
         <tbody>
-          @for (room of rooms(); track room.id) {
+          @if (isLoadingRooms()) {
             <tr>
-              <td>{{ room.name }}</td>
-              <td>{{ room.currentPlayers }}/{{ room.maxPlayers }}</td>
-              <td>
-                <span class="status" [class.open]="room.status === 'Open'">
-                  {{ statusMap[room.status] }}
-                </span>
-              </td>
-              <td>
-                <app-button
-                  label="Join"
-                  variant="primary"
-                  (clicked)="joinRoom(room.id)"
-                ></app-button>
+              <td colspan="4">
+                <app-spinner size="medium" color="secondary"></app-spinner>
               </td>
             </tr>
-          } @empty {
-            <tr>
-              <td colspan="4" class="no-rooms">No rooms available</td>
-            </tr>
+          } @else {
+            @for (room of rooms(); track room.id) {
+              <tr>
+                <td>{{ room.name }}</td>
+                <td>{{ room.currentPlayers }}/{{ room.maxPlayers }}</td>
+                <td>
+                  <span class="status" [class.open]="room.status === 'Open'">
+                    {{ statusMap[room.status] }}
+                  </span>
+                </td>
+                <td>
+                  <app-button
+                    label="Join"
+                    variant="primary"
+                    (clicked)="joinRoom(room.id)"
+                  ></app-button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="4" class="no-rooms">No rooms available</td>
+              </tr>
+            }
           }
           @if (isLoadingMore()) {
             <tr>
               <td colspan="4">
-                <app-spinner
-                  size="medium"
-                  color="secondary"
-                ></app-spinner>
+                <app-spinner size="medium" color="secondary"></app-spinner>
               </td>
             </tr>
           }
         </tbody>
       </table>
-
       <div #endOfList style="height: 1px"></div>
     </div>
   </div>

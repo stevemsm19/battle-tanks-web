@@ -14,6 +14,7 @@ interface SearchRoomState {
   page: number;
   hasNextPage: boolean;
   isLoadingMore: boolean;
+  isLoadingRooms: boolean;
 }
 
 const initialState: SearchRoomState = {
@@ -24,6 +25,7 @@ const initialState: SearchRoomState = {
   page: 1,
   hasNextPage: false,
   isLoadingMore: false,
+  isLoadingRooms: false,
 };
 
 export const SearchRoomStore = signalStore(
@@ -31,14 +33,19 @@ export const SearchRoomStore = signalStore(
   withMethods(
     (store, roomService = inject(RoomService), router = inject(Router)) => ({
       loadRooms(): void {
+        patchState(store, { isLoadingRooms: true });
         roomService.getRooms(1).subscribe({
           next: (result) =>
             patchState(store, {
               rooms: result.items,
               page: 1,
               hasNextPage: result.hasNextPage,
+              isLoadingRooms: false,
             }),
-          error: (err) => console.error('Error fetching rooms:', err),
+          error: (err) => {
+            console.error('Error fetching rooms:', err);
+            patchState(store, { isLoadingRooms: false });
+          },
         });
       },
 

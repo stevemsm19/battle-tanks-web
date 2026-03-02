@@ -1,9 +1,16 @@
 <div
-  class="tank"
-  [style.left.px]="position.x"
-  [style.top.px]="position.y"
+  class="tank-unit"
+  [style.left]="'calc(' + ((x || 1) - 1) + ' * (100% / 24))'"
+  [style.top]="'calc(' + ((y || 1) - 1) + ' * (100% / 16))'"
 >
-  <div class="tank-body"></div>
-
-  <div class="tank-cannon"></div>
+<div
+  class="tank-body"
+  [class]="'high'"
+>
+  <div
+    class="tank-turret"
+    [class]="'UP'"
+  ></div>
+</div>
+  <div class="tank-name">{{ name }}</div>
 </div>

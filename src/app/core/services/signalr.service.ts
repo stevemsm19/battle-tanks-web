@@ -44,27 +44,27 @@ export class SignalrService {
   };
 
   public joinGame = (roomId: string) => {
-    return this.hubConnection
-      .invoke('JoinGame', roomId)
-      .catch((err) => console.error('Error joining game: ' + err));
+    return this.invoke('JoinGame', roomId).catch((err) =>
+      console.error('Error joining game: ' + err),
+    );
   };
 
   public leaveGame = (roomId: string) => {
-    return this.hubConnection
-      .invoke('LeaveGame', roomId)
-      .catch((err) => console.error('Error leaving game: ' + err));
+    return this.invoke('LeaveGame', roomId).catch((err) =>
+      console.error('Error leaving game: ' + err),
+    );
   };
 
   public joinSearchRoom = () => {
-    return this.hubConnection
-      .invoke('JoinSearchRoomGroup')
-      .catch((err) => console.error('Error joining SearchRoom group: ' + err));
+    return this.invoke('JoinSearchRoomGroup').catch((err) =>
+      console.error('Error joining SearchRoom group: ' + err),
+    );
   };
 
   public leaveSearchRoom = () => {
-    return this.hubConnection
-      .invoke('LeaveSearchRoomGroup')
-      .catch((err) => console.error('Error leaving SearchRoom group: ' + err));
+    return this.invoke('LeaveSearchRoomGroup').catch((err) =>
+      console.error('Error leaving SearchRoom group: ' + err),
+    );
   };
 
   public off(methodName: string) {
@@ -80,6 +80,7 @@ export class SignalrService {
 
   public async invoke(methodName: string, ...args: any[]) {
     await this.startConnection();
+    console.log(`[SignalR Invoke] ${methodName}:`, ...args);
     return this.hubConnection.invoke(methodName, ...args);
   }
 }

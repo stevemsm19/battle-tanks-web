@@ -13,6 +13,7 @@ export class SearchRoomService implements OnDestroy {
   public readonly rooms = this.store.rooms;
   public readonly isRedirectModalOpen = this.store.isRedirectModalOpen;
   public readonly isLoadingMore = this.store.isLoadingMore;
+  public readonly isLoadingRooms = this.store.isLoadingRooms;
   public readonly hasNextPage = this.store.hasNextPage;
 
   constructor() {
@@ -48,24 +49,22 @@ export class SearchRoomService implements OnDestroy {
   }
 
   private addListeners(): void {
-    this.signalrService.startConnection().then(() => {
-      this.signalrService.joinSearchRoom();
-      this.signalrService.on('RoomCreated', (room: Room) => {
-        this.store.addRoom(room);
-      });
-      this.signalrService.on(
-        'RoomStatusChanged',
-        (data: { roomId: string }) => {
-          this.store.removeRoom(data.roomId);
-        },
-      );
-      this.signalrService.on(
-        'RoomPlayerCountChanged',
-        (data: { roomId: string; currentPlayers: number }) => {
-          this.store.updateRoomPlayerCount(data.roomId, data.currentPlayers);
-        },
-      );
+    this.signalrService.joinSearchRoom();
+
+    this.signalrService.on('RoomCreated', (room: Room) => {
+      this.store.addRoom(room);
     });
+
+    this.signalrService.on('RoomStatusChanged', (data: { roomId: string }) => {
+      this.store.removeRoom(data.roomId);
+    });
+
+    this.signalrService.on(
+      'RoomPlayerCountChanged',
+      (data: { roomId: string; currentPlayers: number }) => {
+        this.store.updateRoomPlayerCount(data.roomId, data.currentPlayers);
+      },
+    );
   }
 
   private removeListeners(): void {

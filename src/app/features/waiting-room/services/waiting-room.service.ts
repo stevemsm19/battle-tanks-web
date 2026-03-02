@@ -8,6 +8,7 @@ import {
   WaitingRoomStore,
   WaitingPlayer,
 } from '../../../domain/rooms/store/waiting-room.store';
+import { GameService } from '../../game/services/game.service';
 
 @Injectable()
 export class WaitingRoomService {
@@ -16,6 +17,7 @@ export class WaitingRoomService {
   private roomService = inject(RoomService);
   private loginService = inject(LoginService);
   private router = inject(Router);
+  private gameService = inject(GameService);
   private firebaseUser = toSignal(this.loginService.user$);
 
   public roomName = this.waitingRoomStore.roomName;
@@ -34,9 +36,7 @@ export class WaitingRoomService {
   public loadRoomDetails(id: string) {
     this.waitingRoomStore.setRoom(id, '', '');
 
-    this.signalrService
-      .invoke('JoinGame', id)
-      .catch((err) => console.error('Error joining SignalR group:', err));
+    this.signalrService.joinGame(id);
 
     this.roomService.getRoomById(id).subscribe({
       next: (details) => {
@@ -85,7 +85,6 @@ export class WaitingRoomService {
         name: string;
         isOwner?: boolean;
       }) => {
-        console.log('SignalR [PlayerJoined]:', player);
         this.waitingRoomStore.addPlayer({
           id: player.id,
           firebaseUid: player.firebaseUid,
@@ -98,7 +97,6 @@ export class WaitingRoomService {
     this.signalrService.on(
       'PlayerLeft',
       (data: { userId: string; newOwnerId?: string }) => {
-        console.log('SignalR [PlayerLeft]:', data);
         this.waitingRoomStore.removePlayer(data.userId);
         if (data.newOwnerId) {
           this.waitingRoomStore.transferOwner(data.newOwnerId);
@@ -106,10 +104,13 @@ export class WaitingRoomService {
       },
     );
 
-    this.signalrService.on('GameStarted', (data: { roomId: string }) => {
-      console.log('SignalR [GameStarted]:', data);
-      this.removeListeners();
-      this.router.navigate(['/game', data.roomId]);
-    });
+    this.signalrService.on(
+      'GameStarted',
+      (data: { roomId: string; map: number[][]; players: any[] }) => {
+        this.gameService.initializeGame(data.map, data.players);
+        this.removeListeners();
+        this.router.navigate(['/game', data.roomId]);
+      },
+    );
   }
 }
