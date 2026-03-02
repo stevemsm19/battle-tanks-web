@@ -6,6 +6,9 @@
   justify-content: center;
   align-items: center;
   z-index: 10;
+  transition:
+    left 280ms linear,
+    top 280ms linear;
 }
 
 .tank-name {
@@ -73,7 +76,7 @@
   top: 50%;
   left: 50%;
   transform-origin: center center;
-  transform: translate(-50%, -50%); 
+  transform: translate(-50%, -50%);
   border: 2px solid #1b5e20;
   border-radius: 2px;
   box-sizing: border-box;

@@ -10,4 +10,8 @@ export class GameService {
     this.mapMatrix.set(map);
     this.players.set(players);
   }
+
+  public updatePlayers(players: any[]): void {
+    this.players.set(players);
+  }
 }

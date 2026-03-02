@@ -61,6 +61,7 @@ export class WaitingRoomService {
 
   public leaveRoom() {
     const id = this.roomId();
+    this.signalrService.invoke('LeaveGame', id);
     this.removeListeners();
     return this.roomService.leaveRoom(id);
   }
