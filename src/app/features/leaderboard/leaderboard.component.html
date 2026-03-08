@@ -1,0 +1,48 @@
+<div class="page-container">
+  <header class="top-container">
+    <app-page-title title="Leaderboard"></app-page-title>
+  </header>
+
+  <div class="body-container">
+    <app-sidebar activeMenu="leaderboard"></app-sidebar>
+
+    <div class="content-panel">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Player</th>
+              <th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            @if (isLoading()) {
+              <tr>
+                <td colspan="3">
+                  <app-spinner size="medium" color="secondary"></app-spinner>
+                </td>
+              </tr>
+            } @else if (errorMessage()) {
+              <tr>
+                <td colspan="3" class="error-message">{{ errorMessage() }}</td>
+              </tr>
+            } @else {
+              @for (player of topPlayers(); track player.nickname) {
+                <tr>
+                  <td>#{{ player.rank }}</td>
+                  <td>{{ player.nickname }}</td>
+                  <td>{{ player.score }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="3" class="no-players">No rankings available</td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

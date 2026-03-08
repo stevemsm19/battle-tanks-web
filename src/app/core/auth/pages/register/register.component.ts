@@ -66,7 +66,6 @@ export class RegisterComponent {
         this.router.navigate(['/login']);
       },
       error: (error) => {
-        console.error('Registration error:', error.error);
         if (error.error) {
           this.errorMessage = error.error.detail;
         } else {

@@ -34,12 +34,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 70%;
+  height: 100%;
 }
 
 .image-placeholder {
-  width: 80%;
-  height: 90%;
-  background: #ccc;
+  width: 100%;
+  height: 100%;
+  background:white;
   border-radius: 8px;
+  overflow: hidden;
 }
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+

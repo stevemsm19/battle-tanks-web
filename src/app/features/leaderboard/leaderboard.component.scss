@@ -1,0 +1,93 @@
+.page-container {
+  height: 100vh;
+  background-color: #1a1a1a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  border: 3px solid #333;
+}
+
+.top-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 2rem 4rem;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+
+.body-container {
+  display: flex;
+  flex: 1;
+  gap: 3rem;
+  margin: 2rem 4rem;
+  overflow: hidden;
+}
+
+.content-panel {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.table-container {
+  width: 100%;
+  max-width: 800px;
+  max-height: 600px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  overflow-y: auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+      font-size: 1.4rem;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    th {
+      background-color: #2a2a2a;
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 1.4rem;
+      color: #aaa;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+    }
+
+    td:first-child {
+      font-weight: bold;
+      color: #ffd700;
+    }
+
+    .no-players,
+    .error-message {
+      text-align: center;
+      font-style: italic;
+    }
+
+    .no-players {
+      color: #aaa;
+    }
+
+    .error-message {
+      color: #ff4d4d;
+    }
+  }
+}

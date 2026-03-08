@@ -11,6 +11,7 @@ import { BoardComponent } from './features/game/board.component';
 import { MyAccountComponent } from './features/my-account/my-account.component';
 import { ControlsComponent } from './features/controls/controls.component';
 import { PlayComponent } from './features/play/play.component';
+import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -49,6 +50,11 @@ export const routes: Routes = [
   {
     path: 'controls',
     component: ControlsComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'leaderboard',
+    component: LeaderboardComponent,
     canActivate: [authGuard],
   },
   { path: '**', redirectTo: 'play' },
