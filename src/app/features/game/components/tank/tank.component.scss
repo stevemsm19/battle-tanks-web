@@ -69,29 +69,29 @@
 }
 
 .tank-turret {
-  width: 50%;
-  height: 60%;
+  width: 40%;
+  height: 70%;
   background-color: #388e3c;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform-origin: center center;
-  transform: translate(-50%, -50%);
+  transform-origin: 50% 80%;
+  transform: translate(-50%, -90%);
   border: 2px solid #1b5e20;
-  border-radius: 2px;
+  border-radius: 4px;
   box-sizing: border-box;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease-out;
 
   &.up {
-    transform: translate(-50%, -50%) rotate(0deg);
+    transform: translate(-50%, -90%) rotate(0deg);
   }
   &.down {
-    transform: translate(-50%, -50%) rotate(180deg);
+    transform: translate(-50%, -90%) rotate(180deg);
   }
   &.left {
-    transform: translate(-50%, -50%) rotate(-90deg);
+    transform: translate(-50%, -90%) rotate(-90deg);
   }
   &.right {
-    transform: translate(-50%, -50%) rotate(90deg);
+    transform: translate(-50%, -90%) rotate(90deg);
   }
 }

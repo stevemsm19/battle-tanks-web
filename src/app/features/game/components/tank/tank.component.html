@@ -3,14 +3,8 @@
   [style.left]="'calc(' + ((x || 1) - 1) + ' * (100% / 24))'"
   [style.top]="'calc(' + ((y || 1) - 1) + ' * (100% / 16))'"
 >
-<div
-  class="tank-body"
-  [class]="'high'"
->
-  <div
-    class="tank-turret"
-    [class]="'UP'"
-  ></div>
-</div>
+  <div class="tank-body {{ healthClass }}">
+    <div class="tank-turret {{ directionClass }}"></div>
+  </div>
   <div class="tank-name">{{ name }}</div>
 </div>
