@@ -14,7 +14,6 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

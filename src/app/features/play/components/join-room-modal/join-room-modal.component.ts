@@ -7,7 +7,6 @@ import { RoomService } from '../../../../domain/rooms/services/room.service';
 
 @Component({
   selector: 'app-join-room-modal',
-  standalone: true,
   imports: [ReactiveFormsModule, InputComponent, ButtonComponent],
   templateUrl: './join-room-modal.component.html',
   styleUrl: './join-room-modal.component.scss',

@@ -18,7 +18,6 @@ import { SpinnerComponent } from '../../shared/components/spinner/spinner.compon
 
 @Component({
   selector: 'app-rooms',
-  standalone: true,
   imports: [
     CommonModule,
     ButtonComponent,

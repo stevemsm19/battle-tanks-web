@@ -17,7 +17,6 @@ import { UserService } from '../../domain/users/services/user.service';
 
 @Component({
   selector: 'app-my-account',
-  standalone: true,
   imports: [
     ReactiveFormsModule,
     SidebarComponent,

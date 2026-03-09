@@ -2,7 +2,7 @@ import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 
 export interface WaitingPlayer {
   id: string;
-  firebaseUid: string;
+  externalId: string;
   name: string;
   isOwner: boolean;
 }

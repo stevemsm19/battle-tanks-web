@@ -14,7 +14,7 @@ import { PlayComponent } from './features/play/play.component';
 import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'play', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [publicGuard] },
   {
     path: 'register',

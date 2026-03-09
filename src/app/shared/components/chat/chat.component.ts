@@ -7,7 +7,6 @@ import { AuthStore } from '../../../core/auth/store/auth.store';
 
 @Component({
   selector: 'app-chat',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './chat.component.html',
   styleUrl: './chat.component.scss',

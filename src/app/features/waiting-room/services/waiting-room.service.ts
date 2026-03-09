@@ -34,7 +34,7 @@ export class WaitingRoomService {
   public loadRoomDetails(id: string) {
     this.waitingRoomStore.setRoom(id, '', '');
 
-    this.signalrService.joinGame(id);
+    this.signalrService.invoke('JoinGame', id);
 
     this.roomService.getRoomById(id).subscribe({
       next: (details) => {
@@ -46,7 +46,7 @@ export class WaitingRoomService {
 
         const players: WaitingPlayer[] = details.players.map((p: any) => ({
           id: p.id || '',
-          firebaseUid: p.firebaseUid || '',
+          externalId: p.externalId || '',
           name: p.name || 'Unknown',
           isOwner: p.isOwner ?? false,
         }));
@@ -80,13 +80,13 @@ export class WaitingRoomService {
       'PlayerJoined',
       (player: {
         id: string;
-        firebaseUid: string;
+        externalId: string;
         name: string;
         isOwner?: boolean;
       }) => {
         this.waitingRoomStore.addPlayer({
           id: player.id,
-          firebaseUid: player.firebaseUid,
+          externalId: player.externalId,
           name: player.name,
           isOwner: player.isOwner ?? false,
         });

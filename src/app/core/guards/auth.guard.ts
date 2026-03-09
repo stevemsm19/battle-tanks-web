@@ -10,16 +10,24 @@ export const authGuard: CanActivateFn = async () => {
 
   if (authStore.isLoading()) {
     await firstValueFrom(
-      toObservable(authStore.isLoading).pipe(filter(loading => !loading))
+      toObservable(authStore.isLoading).pipe(filter((loading) => !loading)),
     );
   }
+
+  console.log(authStore.user());
 
   return authStore.user() ? true : router.parseUrl('/login');
 };
 
-export const publicGuard: CanActivateFn = () => {
+export const publicGuard: CanActivateFn = async () => {
   const router = inject(Router);
   const authStore = inject(AuthStore);
+
+  if (authStore.isLoading()) {
+    await firstValueFrom(
+      toObservable(authStore.isLoading).pipe(filter((loading) => !loading)),
+    );
+  }
 
   return authStore.user() ? router.parseUrl('/play') : true;
 };

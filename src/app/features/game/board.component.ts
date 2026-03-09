@@ -4,80 +4,110 @@ import {
   OnInit,
   OnDestroy,
   HostListener,
+  computed,
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ChatComponent } from '../../shared/components/chat/chat.component';
 import { GameService } from './services/game.service';
+import { GameBoardService } from './services/game-board.service';
 import { TankComponent } from './components/tank/tank.component';
-import { SignalrService } from '../../core/services/signalr.service';
+import { AuthStore } from '../../core/auth/store/auth.store';
+import { ButtonComponent } from '../../shared/components/button/button.component';
 
 type Direction = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | 'NONE';
 
 const KEY_MAP: Record<string, Direction> = {
   ArrowUp: 'UP',
-  w: 'UP',
+  KeyW: 'UP',
   ArrowDown: 'DOWN',
-  s: 'DOWN',
+  KeyS: 'DOWN',
   ArrowLeft: 'LEFT',
-  a: 'LEFT',
+  KeyA: 'LEFT',
   ArrowRight: 'RIGHT',
-  d: 'RIGHT',
+  KeyD: 'RIGHT',
 };
 
 @Component({
   selector: 'app-board',
-  standalone: true,
-  imports: [ChatComponent, TankComponent],
+  imports: [TankComponent, ChatComponent, CommonModule, ButtonComponent],
+  providers: [GameBoardService],
   templateUrl: './board.component.html',
   styleUrl: './board.component.scss',
 })
 export class BoardComponent implements OnInit, OnDestroy {
   private gameService = inject(GameService);
-  private signalrService = inject(SignalrService);
+  private gameBoardService = inject(GameBoardService);
   private route = inject(ActivatedRoute);
+  private authStore = inject(AuthStore);
+  private router = inject(Router);
 
   mapName = 'Default Map';
   mapMatrix = this.gameService.mapMatrix;
   players = this.gameService.players;
+  bullets = this.gameService.bullets;
+  gameOverData = this.gameBoardService.gameOverData;
+
+  currentPlayer = computed(() => {
+    const uid = this.authStore.user()?.uid;
+    const list = this.players();
+    if (!uid || list.length === 0) return null;
+    return list.find((p: any) => p.externalId === uid) || null;
+  });
 
   roomId = '';
   private heldKeys: Direction[] = [];
 
   ngOnInit(): void {
     this.roomId = this.route.snapshot.paramMap.get('id') ?? '';
-    this.signalrService.on('GameTick', (data: { players: any[] }) => {
-      this.gameService.updatePlayers(data.players);
-    });
+    this.gameBoardService.connect(this.roomId);
   }
 
   ngOnDestroy(): void {
-    this.signalrService.invoke('LeaveGame', this.roomId);
-    this.signalrService.off('GameTick');
+    this.gameBoardService.disconnect(this.roomId);
   }
 
   @HostListener('window:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
-    const dir = KEY_MAP[event.key];
-    if (!dir || this.heldKeys.at(-1) === dir) return;
+    if (this.gameOverData()) return;
 
+    if (event.code === 'Space') {
+      event.preventDefault();
+      this.gameBoardService.shoot(this.roomId);
+      return;
+    }
+
+    const dir = KEY_MAP[event.code];
+    if (!dir || this.heldKeys.at(-1) === dir) return;
     this.heldKeys = this.heldKeys.filter((d) => d !== dir);
     this.heldKeys.push(dir);
-    this.sendDirection(dir);
+    this.gameBoardService.changeDirection(this.roomId, dir);
   }
 
   @HostListener('window:keyup', ['$event'])
   onKeyUp(event: KeyboardEvent): void {
-    const dir = KEY_MAP[event.key];
-    if (!dir) return;
+    if (this.gameOverData()) return;
 
+    const dir = KEY_MAP[event.code];
+    if (!dir) return;
     this.heldKeys = this.heldKeys.filter((d) => d !== dir);
-    const active: Direction = this.heldKeys.at(-1) ?? 'NONE';
-    this.sendDirection(active);
+    this.gameBoardService.changeDirection(
+      this.roomId,
+      this.heldKeys.at(-1) ?? 'NONE',
+    );
   }
 
-  private sendDirection(direction: Direction): void {
-    this.signalrService
-      .invoke('ChangeDirection', this.roomId, direction)
-      .catch((err) => console.error('ChangeDirection error:', err));
+  getHealthClass(health: number): string {
+    if (health > 60) return 'high';
+    if (health > 30) return 'medium';
+    return 'low';
+  }
+
+  padScore(score: number): string {
+    return String(score || 0).padStart(6, '0');
+  }
+
+  returnToSearchRoom(): void {
+    this.router.navigate(['/search-room']);
   }
 }

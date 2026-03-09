@@ -18,14 +18,24 @@
         }
       }
 
-      @for (player of players(); track player.userId) {
-        <app-tank
-          [x]="player.x"
-          [y]="player.y"
-          [direction]="player.direction"
-          [name]="player.name"
-          [health]="player.health"
-        ></app-tank>
+      @for (player of players(); track player.externalId) {
+        @if (player.health > 0) {
+          <app-tank
+            [x]="player.x"
+            [y]="player.y"
+            [direction]="player.direction"
+            [name]="player.name"
+            [health]="player.health"
+          ></app-tank>
+        }
+      }
+
+      @for (bullet of bullets(); track bullet.id) {
+        <div
+          class="bullet {{ bullet.direction | lowercase }}"
+          [style.left]="'calc(' + (bullet.x - 1) + ' * (100% / 24))'"
+          [style.top]="'calc(' + (bullet.y - 1) + ' * (100% / 16))'"
+        ></div>
       }
     </div>
 
@@ -33,38 +43,155 @@
       <div class="stats-container">
         <div class="panel-header">STATUS</div>
 
-        <div class="stat-group">
-          <label>PLAYER</label>
-          <div class="value">Steven</div>
-        </div>
-
-        <div class="stat-group">
-          <label>HEALTH</label>
-          <div class="bar-container">
-            <div class="bar-fill" [style.width.%]="100" [class]="'high'"></div>
+        @if (currentPlayer(); as p) {
+          <div class="stat-group">
+            <label>PLAYER</label>
+            <div class="value">{{ p.name }}</div>
           </div>
-          <div class="value-text">100%</div>
-        </div>
 
-        <div class="stat-group">
-          <label>SCORE</label>
-          <div class="value highlight">000000</div>
-        </div>
-
-        <div class="stat-group">
-          <label>AMMO</label>
-          <div class="ammo-grid">
-            @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
-              <div class="shell"></div>
-            }
+          <div class="stat-group">
+            <label>HEALTH</label>
+            <div class="bar-container">
+              <div
+                class="bar-fill"
+                [style.width.%]="p.health"
+                [class]="getHealthClass(p.health)"
+              ></div>
+            </div>
+            <div class="value-text">{{ p.health }}%</div>
           </div>
-          <div class="value-text">10 / 20</div>
-        </div>
+
+          <div class="stat-group">
+            <label>SCORE</label>
+            <div class="value highlight">{{ padScore(p.score) }}</div>
+          </div>
+
+          <div class="stat-group">
+            <label>AMMO</label>
+            <div class="ammo-grid">
+              @for (i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]; track i) {
+                <div
+                  class="shell"
+                  [style.opacity]="i <= p.ammo ? 1 : 0.2"
+                ></div>
+              }
+            </div>
+            <div class="value-text">{{ p.ammo }} / 10</div>
+          </div>
+        }
       </div>
 
       <div class="chat-container">
-        <app-chat></app-chat>
+        <app-chat [roomId]="roomId"></app-chat>
       </div>
     </div>
   </div>
+
+  @if (gameOverData(); as go) {
+    <div class="toast-overlay">
+      <div class="toast-content" style="text-align: center">
+        <h2
+          class="title"
+          style="
+            color: #ffd700;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            letter-spacing: 2px;
+          "
+        >
+          VICTORY
+        </h2>
+
+        <div class="toast-message">
+          <p
+            style="
+              color: #88aaff;
+              font-size: 2rem;
+              margin-bottom: 0.5rem;
+              font-weight: bold;
+              letter-spacing: 1px;
+            "
+          >
+            🏆 Winner:
+          </p>
+          <p
+            style="
+              font-size: 1.8rem;
+              color: #fff;
+              font-weight: bold;
+              margin-bottom: 2rem;
+            "
+          >
+            {{ go.winnerName }}
+          </p>
+
+          <div
+            style="
+              display: flex;
+              justify-content: center;
+              gap: 3rem;
+              margin-bottom: 2rem;
+            "
+          >
+            <div>
+              <div
+                style="
+                  color: #88aaff;
+                  font-size: 1.2rem;
+                  margin-bottom: 0.5rem;
+                  font-weight: bold;
+                "
+              >
+                SCORE
+              </div>
+              <div
+                style="
+                  color: #ffe566;
+                  font-size: 1.2rem;
+                  font-family: monospace;
+                  font-weight: bold;
+                "
+              >
+                {{ padScore(go.winnerScore) }}
+              </div>
+            </div>
+            <div>
+              <div
+                style="
+                  color: #88aaff;
+                  font-size: 1.2rem;
+                  margin-bottom: 0.5rem;
+                  font-weight: bold;
+                "
+              >
+                H.P. REMAINING
+              </div>
+              <div
+                style="
+                  color: #ffe566;
+                  font-size: 1.2rem;
+                  font-family: monospace;
+                  font-weight: bold;
+                "
+              >
+                {{ go.winnerHealth }}%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="toast-actions"
+          style="justify-content: center; display: flex"
+        >
+          <app-button
+            label="BACK TO LOBBY"
+            variant="primary"
+            class="confirm-btn"
+            (clicked)="returnToSearchRoom()"
+          ></app-button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

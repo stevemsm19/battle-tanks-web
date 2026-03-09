@@ -4,7 +4,6 @@ import { KeyValuePipe } from '@angular/common';
 
 @Component({
   selector: 'app-input',
-  standalone: true,
   imports: [ReactiveFormsModule, KeyValuePipe],
   templateUrl: './input.component.html',
   styleUrl: './input.component.scss',

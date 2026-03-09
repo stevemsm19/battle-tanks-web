@@ -9,7 +9,6 @@ import { PageTitleComponent } from '../../shared/components/page-title/page-titl
 
 @Component({
   selector: 'app-play',
-  standalone: true,
   imports: [
     SidebarComponent,
     ButtonComponent,

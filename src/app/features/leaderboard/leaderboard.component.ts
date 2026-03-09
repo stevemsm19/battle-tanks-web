@@ -7,7 +7,6 @@ import { SpinnerComponent } from '../../shared/components/spinner/spinner.compon
 
 @Component({
   selector: 'app-leaderboard',
-  standalone: true,
   imports: [
     CommonModule,
     SidebarComponent,

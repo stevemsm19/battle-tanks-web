@@ -4,7 +4,6 @@ import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-toast',
-  standalone: true,
   imports: [CommonModule, ButtonComponent],
   templateUrl: './confirmation-modal.component.html',
   styleUrl: './confirmation-modal.component.scss',

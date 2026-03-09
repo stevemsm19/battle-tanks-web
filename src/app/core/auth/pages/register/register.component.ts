@@ -13,7 +13,6 @@ import { ButtonComponent } from '../../../../shared/components/button/button.com
 
 @Component({
   selector: 'app-register',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,

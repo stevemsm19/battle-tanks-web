@@ -13,7 +13,6 @@ import { GameMap } from '../../../../domain/rooms/models/game-map.model';
 
 @Component({
   selector: 'app-create-room-modal',
-  standalone: true,
   imports: [ReactiveFormsModule, InputComponent, ButtonComponent],
   templateUrl: './create-room-modal.component.html',
   styleUrl: './create-room-modal.component.scss',

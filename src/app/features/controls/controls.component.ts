@@ -4,7 +4,6 @@ import { PageTitleComponent } from '../../shared/components/page-title/page-titl
 
 @Component({
   selector: 'app-controls',
-  standalone: true,
   imports: [SidebarComponent, PageTitleComponent],
   templateUrl: './controls.component.html',
   styleUrl: './controls.component.scss',

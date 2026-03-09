@@ -2,6 +2,7 @@ import { Injectable, NgZone } from '@angular/core';
 import { inject } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { LoginService } from '../auth/pages/login/services/login.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -10,11 +11,12 @@ export class SignalrService {
   private hubConnection!: signalR.HubConnection;
   private loginService = inject(LoginService);
   private ngZone = inject(NgZone);
+  private connectionPromise: Promise<void> | null = null;
 
   constructor() {
     this.ngZone.runOutsideAngular(() => {
       this.hubConnection = new signalR.HubConnectionBuilder()
-        .withUrl('http://localhost:5000/gameHub', {
+        .withUrl(`${environment.apiUrl}/gameHub`, {
           accessTokenFactory: () =>
             this.loginService.getToken().then((t) => t ?? ''),
         })
@@ -26,62 +28,28 @@ export class SignalrService {
     });
   }
 
-  private connectionPromise: Promise<void> | null = null;
-
-  public startConnection = () => {
+  public startConnection(): Promise<void> {
     if (this.hubConnection.state === signalR.HubConnectionState.Disconnected) {
       this.connectionPromise = this.hubConnection.start().catch((err) => {
-        console.error('Error establishing SignalR connection: ' + err);
+        console.error('Error establishing SignalR connection:', err);
         throw err;
       });
     }
     return this.connectionPromise || Promise.resolve();
-  };
+  }
 
-  public addMessageListener = (
-    callback: (user: string, message: string) => void,
-  ) => {
-    this.hubConnection.on('ReceiveMessage', (user: string, message: string) => {
-      callback(user, message);
+  public on(methodName: string, callback: (...args: any[]) => void): void {
+    this.hubConnection.on(methodName, (...args) => {
+      console.log(`[SignalR] ${methodName}:`, ...args);
+      callback(...args);
     });
-  };
+  }
 
-  public joinGame = (roomId: string) => {
-    return this.invoke('JoinGame', roomId).catch((err) =>
-      console.error('Error joining game: ' + err),
-    );
-  };
-
-  public leaveGame = (roomId: string) => {
-    return this.invoke('LeaveGame', roomId).catch((err) =>
-      console.error('Error leaving game: ' + err),
-    );
-  };
-
-  public joinSearchRoom = () => {
-    return this.invoke('JoinSearchRoomGroup').catch((err) =>
-      console.error('Error joining SearchRoom group: ' + err),
-    );
-  };
-
-  public leaveSearchRoom = () => {
-    return this.invoke('LeaveSearchRoomGroup').catch((err) =>
-      console.error('Error leaving SearchRoom group: ' + err),
-    );
-  };
-
-  public off(methodName: string) {
+  public off(methodName: string): void {
     this.hubConnection.off(methodName);
   }
 
-  public on(methodName: string, newMethod: (...args: any[]) => void) {
-    this.hubConnection.on(methodName, (...args) => {
-      console.log(`[SignalR Notification] ${methodName}:`, ...args);
-      newMethod(...args);
-    });
-  }
-
-  public async invoke(methodName: string, ...args: any[]) {
+  public async invoke(methodName: string, ...args: any[]): Promise<any> {
     await this.startConnection();
     console.log(`[SignalR Invoke] ${methodName}:`, ...args);
     return this.hubConnection.invoke(methodName, ...args);

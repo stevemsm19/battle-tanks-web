@@ -10,7 +10,6 @@ import { ButtonComponent } from '../../shared/components/button/button.component
 
 @Component({
   selector: 'app-waiting-room',
-  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -40,7 +39,7 @@ export class WaitingRoomComponent implements OnInit {
     const uid = this.waitingRoomService.currentUserId;
     const players = this.players();
 
-    return players.some((p) => p.firebaseUid === uid && p.isOwner);
+    return players.some((p) => p.externalId === uid && p.isOwner);
   });
 
   ngOnInit() {
@@ -98,7 +97,7 @@ export class WaitingRoomComponent implements OnInit {
       },
     });
   }
-  
+
   copyRoomCode(): void {
     navigator.clipboard.writeText(this.roomId()).then(() => {
       this.copyFeedback.set('Code copied to clipboard!');

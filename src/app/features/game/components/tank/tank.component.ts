@@ -1,8 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'app-tank',
-  standalone: true,
+  selector: 'app-tank', 
   imports: [],
   templateUrl: './tank.component.html',
   styleUrl: './tank.component.scss',

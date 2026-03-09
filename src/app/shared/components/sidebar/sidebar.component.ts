@@ -5,7 +5,6 @@ import { ButtonComponent } from '../button/button.component';
 
 @Component({
   selector: 'app-sidebar',
-  standalone: true,
   imports: [ButtonComponent],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.scss',

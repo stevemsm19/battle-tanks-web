@@ -49,7 +49,7 @@ export class SearchRoomService implements OnDestroy {
   }
 
   private addListeners(): void {
-    this.signalrService.joinSearchRoom();
+    this.signalrService.invoke('JoinSearchRoomGroup');
 
     this.signalrService.on('RoomCreated', (room: Room) => {
       this.store.addRoom(room);
@@ -68,7 +68,7 @@ export class SearchRoomService implements OnDestroy {
   }
 
   private removeListeners(): void {
-    this.signalrService.leaveSearchRoom();
+    this.signalrService.invoke('LeaveSearchRoomGroup');
     this.signalrService.off('RoomCreated');
     this.signalrService.off('RoomStatusChanged');
     this.signalrService.off('RoomPlayerCountChanged');
