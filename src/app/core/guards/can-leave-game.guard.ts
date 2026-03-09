@@ -5,7 +5,10 @@ import { SignalrService } from '../services/signalr.service';
 let isGuardRedirecting = false;
 
 export const canLeaveGameGuard: CanDeactivateFn<any> = async (component) => {
-  if (isGuardRedirecting) {
+  if (
+    isGuardRedirecting ||
+    (component.gameOverData && component.gameOverData())
+  ) {
     isGuardRedirecting = false;
     return true;
   }

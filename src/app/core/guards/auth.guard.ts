@@ -14,12 +14,12 @@ export const authGuard: CanActivateFn = async () => {
     );
   }
 
-  return authStore.user() ? true : router.navigate(['/login']);
+  return authStore.user() ? true : router.parseUrl('/login');
 };
 
 export const publicGuard: CanActivateFn = () => {
   const router = inject(Router);
   const authStore = inject(AuthStore);
 
-  return authStore.user() ? router.navigate(['/play']) : true;
+  return authStore.user() ? router.parseUrl('/play') : true;
 };
