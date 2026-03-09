@@ -1,38 +1,25 @@
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
-import { LoginService } from '../auth/pages/login/services/login.service';
-import { map, take } from 'rxjs';
+import { AuthStore } from '../auth/store/auth.store';
+import { filter, firstValueFrom } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = async () => {
   const router = inject(Router);
-  const loginService = inject(LoginService);
+  const authStore = inject(AuthStore);
 
-  return loginService.user$.pipe(
-    take(1),
-    map((user) => {
-      if (user) {
-        return true;
-      } else {
-        router.navigate(['/login']);
-        return false;
-      }
-    }),
-  );
+  if (authStore.isLoading()) {
+    await firstValueFrom(
+      toObservable(authStore.isLoading).pipe(filter(loading => !loading))
+    );
+  }
+
+  return authStore.user() ? true : router.navigate(['/login']);
 };
 
-export const publicGuard: CanActivateFn = (route, state) => {
+export const publicGuard: CanActivateFn = () => {
   const router = inject(Router);
-  const loginService = inject(LoginService);
+  const authStore = inject(AuthStore);
 
-  return loginService.user$.pipe(
-    take(1),
-    map((user) => {
-      if (user) {
-        router.navigate(['/play']);
-        return false;
-      } else {
-        return true;
-      }
-    }),
-  );
+  return authStore.user() ? router.navigate(['/play']) : true;
 };

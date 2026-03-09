@@ -5,6 +5,7 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
+  FormControl,
 } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { LoginService } from './services/login.service';
@@ -40,11 +41,11 @@ export class LoginComponent {
   }
 
   get emailControl() {
-    return this.loginForm.get('email') as any;
+    return this.loginForm.get('email') as FormControl;
   }
 
   get passwordControl() {
-    return this.loginForm.get('password') as any;
+    return this.loginForm.get('password') as FormControl;
   }
 
   login() {

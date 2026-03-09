@@ -2,8 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { SignalrService } from '../../../core/services/signalr.service';
 import { RoomService } from '../../../domain/rooms/services/room.service';
-import { LoginService } from '../../../core/auth/pages/login/services/login.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { AuthStore } from '../../../core/auth/store/auth.store';
 import {
   WaitingRoomStore,
   WaitingPlayer,
@@ -15,10 +14,9 @@ export class WaitingRoomService {
   private signalrService = inject(SignalrService);
   private waitingRoomStore = inject(WaitingRoomStore);
   private roomService = inject(RoomService);
-  private loginService = inject(LoginService);
+  private authStore = inject(AuthStore);
   private router = inject(Router);
   private gameService = inject(GameService);
-  private firebaseUser = toSignal(this.loginService.user$);
 
   public roomName = this.waitingRoomStore.roomName;
   public mapName = this.waitingRoomStore.mapName;
@@ -26,7 +24,7 @@ export class WaitingRoomService {
   readonly players = this.waitingRoomStore.players;
 
   public get currentUserId() {
-    return this.firebaseUser()?.uid || '';
+    return this.authStore.user()?.uid || '';
   }
 
   constructor() {

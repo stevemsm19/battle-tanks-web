@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SignalrService } from '../../../core/services/signalr.service';
 import { ChatStore, ChatMessage } from './store/chat.store';
-import { LoginService } from '../../../core/auth/pages/login/services/login.service';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { AuthStore } from '../../../core/auth/store/auth.store';
 
 @Component({
   selector: 'app-chat',
@@ -18,14 +17,13 @@ export class ChatComponent implements OnInit, OnDestroy {
 
   private signalrService = inject(SignalrService);
   private chatStore = inject(ChatStore);
-  private loginService = inject(LoginService);
-  private firebaseUser = toSignal(this.loginService.user$);
+  private authStore = inject(AuthStore);
 
   messages = this.chatStore.messages;
   newMessage = '';
 
   get currentUserId(): string {
-    return this.firebaseUser()?.uid ?? '';
+    return this.authStore.user()?.uid ?? '';
   }
 
   ngOnInit() {
@@ -51,7 +49,7 @@ export class ChatComponent implements OnInit, OnDestroy {
     const text = this.newMessage.trim();
     if (!text) return;
 
-    const fb = this.firebaseUser();
+    const fb = this.authStore.user();
     const senderName = fb?.displayName ?? fb?.email ?? 'Unknown User';
 
     this.signalrService

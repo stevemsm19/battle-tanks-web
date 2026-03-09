@@ -1,23 +1,17 @@
-import { inject, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   getAuth,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged,
-  User,
 } from 'firebase/auth';
 import { app } from '../../../../../../firebase.config';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LoginService {
   private auth = getAuth(app);
-
-  user$ = new Observable<User | null>((subscriber) => {
-    return onAuthStateChanged(this.auth, subscriber);
-  });
 
   constructor() {}
 
@@ -54,14 +48,6 @@ export class LoginService {
         } else {
           resolve(null);
         }
-      });
-    });
-  }
-
-  isLoggedIn(): Observable<boolean> {
-    return new Observable<boolean>((subscriber) => {
-      return onAuthStateChanged(this.auth, (user) => {
-        subscriber.next(!!user);
       });
     });
   }
