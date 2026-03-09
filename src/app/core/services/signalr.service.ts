@@ -70,6 +70,14 @@ export class SignalrService {
     );
   };
 
+  public onBulletSpawned(callback: (bullet: any) => void): void {
+    this.hubConnection?.on('BulletSpawned', callback);
+  }
+
+  public offBulletSpawned(): void {
+    this.hubConnection?.off('BulletSpawned');
+  }
+
   public off(methodName: string) {
     this.hubConnection.off(methodName);
   }
